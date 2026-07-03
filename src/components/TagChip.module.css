@@ -1,0 +1,24 @@
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  background: var(--color-tag-bg);
+  color: var(--color-tag-text);
+  border-radius: 100px;
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  font-family: inherit;
+  border: none;
+  line-height: 1.6;
+  cursor: default;
+  white-space: nowrap;
+}
+
+button.chip {
+  cursor: pointer;
+  transition: opacity var(--transition);
+}
+
+button.chip:hover {
+  opacity: 0.75;
+}

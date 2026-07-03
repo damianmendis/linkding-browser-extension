@@ -1,0 +1,51 @@
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  border-top: 1px solid var(--color-border);
+  background: var(--color-surface);
+  min-height: 30px;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+.ok .dot,
+.ok.dot {
+  background: var(--color-success);
+}
+
+.syncing {
+  color: var(--color-accent);
+}
+.syncing .dot {
+  background: var(--color-accent);
+  animation: pulse 1s ease-in-out infinite;
+}
+
+.offline {
+  color: var(--color-warning);
+}
+.offline .dot {
+  background: var(--color-warning);
+}
+
+.error {
+  color: var(--color-danger);
+}
+.error .dot {
+  background: var(--color-danger);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}

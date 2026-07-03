@@ -1,0 +1,306 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-height: 600px;
+  overflow: hidden;
+  background: var(--color-bg);
+}
+
+/* ─── Top bar ─────────────────────────────────────────────────────────────── */
+
+.topBar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg);
+  flex-shrink: 0;
+}
+
+.topBarTitle {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-text);
+  flex: 1;
+}
+
+.searchWrapper {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 8px;
+  font-size: 12px;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.searchInput {
+  width: 100%;
+  height: 32px;
+  padding: 0 28px 0 28px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  background: var(--color-surface);
+  color: var(--color-text);
+  transition: border-color var(--transition), background var(--transition);
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  background: var(--color-bg);
+}
+
+.searchInput::placeholder {
+  color: var(--color-text-muted);
+}
+
+/* hide native clear button in Chrome/Safari */
+.searchInput::-webkit-search-cancel-button { display: none; }
+
+.clearBtn {
+  position: absolute;
+  right: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 11px;
+  color: var(--color-text-muted);
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background var(--transition);
+}
+.clearBtn:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-text);
+}
+
+.iconBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
+  transition: background var(--transition), color var(--transition);
+  flex-shrink: 0;
+}
+.iconBtn:hover:not(:disabled) {
+  background: var(--color-surface-hover);
+  color: var(--color-text);
+}
+.iconBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.backBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  color: var(--color-accent);
+  font-family: inherit;
+  padding: 4px 6px;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition);
+}
+.backBtn:hover {
+  background: var(--color-surface-hover);
+}
+
+/* ─── Section label ──────────────────────────────────────────────────────── */
+
+.sectionLabel {
+  padding: 5px 12px;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  font-weight: 500;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ─── List ───────────────────────────────────────────────────────────────── */
+
+.list {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 40px 20px;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  text-align: center;
+}
+
+.hintText {
+  font-size: var(--font-size-xs);
+}
+
+.spinner {
+  display: block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ─── Footer ─────────────────────────────────────────────────────────────── */
+
+.footer {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--color-border);
+}
+
+.addBtn {
+  padding: 9px 14px;
+  text-align: left;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-accent);
+  background: var(--color-bg);
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--transition);
+}
+.addBtn:hover:not(:disabled) {
+  background: var(--color-surface-hover);
+}
+.addBtn.disabled,
+.addBtn:disabled {
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+/* ─── Unconfigured ───────────────────────────────────────────────────────── */
+
+.centered {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  padding: 20px;
+}
+
+.setupBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+  max-width: 280px;
+}
+
+.logo {
+  font-size: 32px;
+}
+
+.setupTitle {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.setupText {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+/* ─── Add form ───────────────────────────────────────────────────────────── */
+
+.addForm {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+}
+
+.addField {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.addField label {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.addField input,
+.addField textarea {
+  padding: 7px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  background: var(--color-bg);
+  color: var(--color-text);
+  transition: border-color var(--transition);
+  width: 100%;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.addField input:focus,
+.addField textarea:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.addError {
+  font-size: var(--font-size-sm);
+  color: var(--color-danger);
+  padding: 6px 10px;
+  background: rgba(220, 38, 38, 0.08);
+  border-radius: var(--radius-sm);
+}
+
+.addActions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.offlineNote {
+  font-size: var(--font-size-xs);
+  color: var(--color-warning);
+  text-align: center;
+}

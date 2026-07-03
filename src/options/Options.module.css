@@ -1,0 +1,152 @@
+.page {
+  color: var(--color-text);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.logo {
+  font-size: 36px;
+  flex-shrink: 0;
+}
+
+.heading {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 4px;
+}
+
+.subheading {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.section {
+  margin-bottom: 28px;
+  padding: 20px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.sectionTitle {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 14px;
+}
+
+.sectionDesc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 14px;
+}
+
+.field:last-child {
+  margin-bottom: 0;
+}
+
+.field label {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.field input[type="text"],
+.field input[type="password"],
+.field input[type="number"],
+.field select {
+  padding: 8px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  background: var(--color-bg);
+  color: var(--color-text);
+  transition: border-color var(--transition);
+  font-family: inherit;
+}
+
+.field input[type="number"] {
+  max-width: 120px;
+}
+
+.field input:focus,
+.field select:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.hint {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  cursor: pointer;
+  font-weight: normal;
+}
+
+.checkboxLabel input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: var(--color-accent);
+}
+
+.connRow,
+.saveRow,
+.cacheRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.formError {
+  font-size: var(--font-size-sm);
+  color: var(--color-danger);
+  padding: 8px 12px;
+  background: rgba(220, 38, 38, 0.08);
+  border-radius: var(--radius-md);
+  margin-bottom: 14px;
+}
+
+.saveRow {
+  margin-bottom: 28px;
+}
+
+.badge {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 100px;
+}
+
+.badgeSuccess {
+  background: rgba(22, 163, 74, 0.12);
+  color: var(--color-success);
+}
+
+.badgeError {
+  background: rgba(220, 38, 38, 0.1);
+  color: var(--color-danger);
+}

@@ -1,0 +1,7 @@
+node_modules/
+dist-chrome/
+dist-firefox/
+linkding-chrome.zip
+linkding-firefox.zip
+*.tar.gz
+.DS_Store
