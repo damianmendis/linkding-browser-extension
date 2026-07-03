@@ -1,162 +1,117 @@
 # Linkding Browser Extension
 
-A cross-browser WebExtension for [Linkding](https://github.com/sissbruecker/linkding) that lets you search, open, and save bookmarks directly from the toolbar — without opening the Linkding web app.
+A lightweight browser extension for [Linkding](https://github.com/sissbruecker/linkding) — the self-hosted bookmark manager. Search, open, and save bookmarks directly from your toolbar without leaving the page you're on.
 
-## Features (v1)
+![Version](https://img.shields.io/badge/version-1.0.2-blue) ![License](https://img.shields.io/badge/license-MIT-green) ![MV3](https://img.shields.io/badge/manifest-v3-orange)
 
-- Search bookmarks instantly from the toolbar popup (local cache, no round-trip)
-- Browse recent bookmarks when search is empty
-- Save the current page to Linkding with title, tags, and notes
-- Edit bookmarks (title, URL, tags, notes)
-- Delete bookmarks with confirmation
-- Offline read/search from local cache
-- Full keyboard navigation
-- Auto-refresh cache in the background
-- Firefox, Chrome, and Edge support from a single codebase
+---
 
-## Getting started
+## What it does
 
-### 1. Install dependencies
+- **Instant search** — filter your bookmarks as you type, from a local cache (no round-trip to your server)
+- **Save the current page** — one click to bookmark the tab you're on, with title, URL, tags, and notes pre-filled
+- **Edit and delete** — manage bookmarks inline without opening the Linkding web app
+- **Works offline** — browse and search your cached bookmarks even when your server is unreachable
+- **Keyboard-first** — full keyboard navigation so you rarely need to reach for the mouse
+- **Chrome, Edge, and Firefox** — single codebase, packaged separately for each browser
 
-```bash
-npm install
-```
+---
 
-### 2. Build
+## Requirements
 
-```bash
-# Chrome/Edge
-npm run build:chrome
+- A running [Linkding](https://github.com/sissbruecker/linkding) instance (self-hosted)
+- Your Linkding API token (found under **Settings → Integrations → REST API**)
+- Chrome 109+, Edge 109+, or Firefox 109+
 
-# Firefox
-npm run build:firefox
-```
+---
 
-### 3. Load in browser
+## Installation
 
-**Chrome/Edge (developer mode)**
+### Chrome / Edge
 
-1. Open `chrome://extensions` (or `edge://extensions`)
-2. Enable "Developer mode"
-3. Click "Load unpacked"
-4. Select the `dist-chrome/` folder
+1. Download **[linkding-chrome-v1.0.2.zip](https://github.com/damianmendis/linkding-browser-extension/releases/download/v1.0.2/linkding-chrome-v1.0.2.zip)** from the latest release
+2. Unzip the file
+3. Go to `chrome://extensions` (or `edge://extensions`)
+4. Enable **Developer mode** (top-right toggle)
+5. Click **Load unpacked** and select the unzipped folder
 
-**Firefox**
+### Firefox
 
-1. Open `about:debugging#/runtime/this-firefox`
-2. Click "Load Temporary Add-on"
-3. Select any file inside `dist-firefox/`
+1. Download **[linkding-firefox-v1.0.2.zip](https://github.com/damianmendis/linkding-browser-extension/releases/download/v1.0.2/linkding-firefox-v1.0.2.zip)** from the latest release
+2. Go to `about:debugging#/runtime/this-firefox`
+3. Click **Load Temporary Add-on**
+4. Select the zip file directly
 
-### 4. Configure
+> **Note:** Firefox temporary add-ons are removed when the browser restarts. Permanent installation requires submission to the Firefox Add-on store (planned for a future release).
 
-1. Click the Linkding toolbar icon
-2. Click "Open settings" (shown on first run)
-3. Enter your Linkding server URL and API token
-   - Find your token in Linkding → Settings → Integrations → REST API
-4. Click "Test connection" to verify
-5. Click "Save settings" — the extension will sync your bookmarks immediately
+---
 
-## Usage
+## Setup
+
+1. Click the Linkding toolbar icon after installing
+2. You'll be taken to the **Settings** page on first run
+3. Enter your **Server URL** (e.g. `https://bookmarks.example.com`)
+4. Enter your **API token**
+5. Click **Test Connection** to verify — you should see a green confirmation
+6. Click **Save** — the extension syncs your bookmarks immediately
+
+Your settings and bookmark cache are stored locally in your browser. Nothing is sent anywhere except to your own Linkding server.
+
+---
+
+## Quick reference
 
 | Action | How |
 |---|---|
-| Open popup | Click toolbar icon or `Ctrl+Shift+L` (`Cmd+Shift+L` on Mac) |
-| Search | Type in the search bar — results filter instantly |
-| Navigate results | `↑` `↓` arrow keys |
-| Open bookmark | `Enter` or click |
-| Clear search | `Esc` or click ✕ |
-| Focus search | `/` key |
-| Save current page | Click "+ Save current page" at the bottom |
+| Open popup | Click the toolbar icon |
+| Search bookmarks | Type in the search bar |
+| Open a bookmark | Click it, or press `Enter` |
+| Save current page | Click **+ Save current page** |
 | Edit a bookmark | Click the ✏ icon on any row |
-| Refresh cache | Click ↻ button in the top bar or go to Settings |
+| Delete a bookmark | Click the 🗑 icon, confirm |
+| Refresh from server | Click ↻ in the popup header or go to Settings |
+| Open settings | Click the ⚙ icon in the popup header |
 
-## Architecture
+For the full keyboard shortcut reference and detailed usage guide, see [USAGE.md](USAGE.md).
 
-```
-src/
-  background/
-    service-worker.ts     # Periodic sync, alarm management
-  popup/
-    Popup.tsx             # Main popup UI
-    popup.css
-  options/
-    Options.tsx           # Settings page
-    options.css
-  components/             # Shared React components
-    BookmarkRow.tsx
-    Button.tsx
-    EditModal.tsx
-    ConfirmDialog.tsx
-    StatusBar.tsx
-    TagChip.tsx
-  lib/
-    api.ts                # Linkding REST API client
-    browser.ts            # Browser abstraction layer
-    cache.ts              # Local cache management
-    search.ts             # Client-side search
-    validators.ts         # URL/token validation, escaping
-    types.ts              # Shared TypeScript types
-  assets/
-    globals.css           # CSS reset and design tokens
-public/
-  manifest.json           # MV3 manifest
-tests/
-  unit/                   # Vitest unit tests
-  e2e/                    # Playwright smoke tests
-```
-
-## Design decisions
-
-| Area | Decision | Reason |
-|---|---|---|
-| Manifest | V3 | Required for Chrome/Edge, supported in Firefox 109+ |
-| UI | React + TypeScript | Type safety and component reuse |
-| Styling | Plain CSS Modules | Minimal footprint, no utility framework needed in v1 |
-| Search | Local cache only | Instant response; no keystroke-level API calls |
-| Storage | `browser.storage.local` | Accessible only to the extension; never exposed to page context |
-| Browser adapter | `webextension-polyfill` | Single API surface across Firefox and Chromium |
+---
 
 ## Permissions
 
-| Permission | Why |
+The extension requests only what it needs:
+
+| Permission | Purpose |
 |---|---|
-| `storage` | Store settings and bookmark cache locally |
-| `activeTab` | Read URL and title of current tab for "Save current page" |
-| `tabs` | Open bookmarks in new or current tab |
+| `storage` | Store your settings and bookmark cache locally |
+| `activeTab` | Read the URL and title of the current tab when saving a page |
+| `tabs` | Open bookmarks in a new or existing tab |
 | `alarms` | Schedule periodic background cache refresh |
-| Host permission | Dynamically granted for the user-configured Linkding origin only |
+| Host permissions | Make requests to your configured Linkding server |
 
-No `<all_urls>` permission. No telemetry. No third-party tracking.
+No telemetry. No analytics. No third-party connections.
 
-## Running tests
+---
 
-```bash
-# Unit tests (Vitest)
-npm test
+## Privacy
 
-# Unit tests in watch mode
-npm run test:watch
+All data stays between your browser and your Linkding server. The extension does not connect to any external service, does not collect usage data, and does not transmit anything to the extension developer.
 
-# E2E smoke tests (Playwright)
-npm run test:e2e
-```
+---
 
-## Packaging for stores
+## Releases
 
-```bash
-# Firefox (produces linkding-firefox.zip)
-bash scripts/package-firefox.sh
+See the [Releases page](https://github.com/damianmendis/linkding-browser-extension/releases) for packaged downloads and changelogs.
 
-# Chrome/Edge (produces linkding-chrome.zip)
-bash scripts/package-chrome.sh
-```
+Current release: **[v1.0.2](https://github.com/damianmendis/linkding-browser-extension/releases/tag/v1.0.2)**
 
-## v1 scope
+---
 
-Included: settings, connection test, cache sync, toolbar popup, search, recent bookmarks, save page, edit, delete, offline read mode, keyboard navigation, auto-refresh.
+## Contributing & development
 
-Excluded (planned for later): favorites view, tag tree, fuzzy ranking, command palette, theme customization, multiple accounts, browser bookmark sync, AI search, import/export.
+If you'd like to build from source, run tests, or contribute, see [CONTRIBUTING.md](CONTRIBUTING.md).
+
+---
 
 ## License
 
-MIT
+MIT — see [LICENSE](LICENSE) for details.
