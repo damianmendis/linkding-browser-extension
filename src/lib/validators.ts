@@ -40,17 +40,3 @@ export function isDev(): boolean {
     return false;
   }
 }
-
-/**
- * Sanitize a string for safe insertion into the DOM as text content.
- * Using textContent assignment is safe, but for cases where we set innerHTML
- * or dangerouslySetInnerHTML this ensures entities are escaped.
- */
-export function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#x27;');
-}

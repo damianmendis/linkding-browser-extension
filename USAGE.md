@@ -73,8 +73,9 @@ Changes are pushed to your Linkding server and reflected in the cache immediatel
 ## Deleting a bookmark
 
 1. Hover over any bookmark row
-2. Click the **🗑 (delete) icon**
-3. A confirmation dialog appears — click **Delete** to confirm
+2. Click the **✏ (edit) icon** that appears on the right
+3. Click **Delete** in the edit form
+4. A confirmation dialog appears — click **Delete** to confirm
 
 Deletion is sent to your Linkding server and the bookmark is removed from the local cache.
 

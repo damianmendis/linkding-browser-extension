@@ -97,3 +97,31 @@ export async function clearRefreshAlarm(): Promise<void> {
 export function openOptionsPage(): void {
   browser.runtime.openOptionsPage();
 }
+
+// ─── Host permissions ──────────────────────────────────────────────────────────
+//
+// The Linkding server URL is user-configured and can be any origin, so we
+// request host access for just that origin at runtime (see
+// optional_host_permissions in manifest.json) instead of declaring a
+// blanket host_permissions entry that would grant access to every site.
+
+function originPattern(serverUrl: string): string {
+  const { protocol, host } = new URL(serverUrl);
+  return `${protocol}//${host}/*`;
+}
+
+export async function hasServerPermission(serverUrl: string): Promise<boolean> {
+  try {
+    return await browser.permissions.contains({ origins: [originPattern(serverUrl)] });
+  } catch {
+    return false;
+  }
+}
+
+export async function requestServerPermission(serverUrl: string): Promise<boolean> {
+  try {
+    return await browser.permissions.request({ origins: [originPattern(serverUrl)] });
+  } catch {
+    return false;
+  }
+}

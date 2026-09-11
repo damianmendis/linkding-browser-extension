@@ -123,9 +123,9 @@ export function Popup() {
 
   // ─── Open ─────────────────────────────────────────────────────────────────
 
-  function handleOpen(bm: Bookmark) {
+  function handleOpen(bm: Bookmark, modeOverride?: 'new-tab' | 'current-tab') {
     if (!settings) return;
-    openUrl(bm.url, settings.openMode);
+    openUrl(bm.url, modeOverride ?? settings.openMode);
     window.close();
   }
 
@@ -264,7 +264,8 @@ export function Popup() {
 
     if (e.key === 'Enter' && displayResults[activeIndex]) {
       e.preventDefault();
-      handleOpen(displayResults[activeIndex].bookmark);
+      const forceNewTab = e.ctrlKey || e.metaKey;
+      handleOpen(displayResults[activeIndex].bookmark, forceNewTab ? 'new-tab' : undefined);
     }
   }
 
@@ -307,7 +308,12 @@ export function Popup() {
 
   if (view === 'add') {
     return (
-      <div className={styles.root}>
+      <div
+        className={styles.root}
+        onKeyDown={(e) => {
+          if (e.key === 'Escape') setView('main');
+        }}
+      >
         <header className={styles.topBar}>
           <button type="button" className={styles.backBtn} onClick={() => setView('main')} aria-label="Back">
             ← Back
