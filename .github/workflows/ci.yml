@@ -13,6 +13,25 @@ permissions:
   contents: read
 
 jobs:
+  changes:
+    name: Detect rebuild-relevant changes
+    runs-on: ubuntu-latest
+    outputs:
+      rebuild: ${{ steps.filter.outputs.rebuild }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: dorny/paths-filter@v4
+        id: filter
+        with:
+          filters: |
+            rebuild:
+              - 'src/**'
+              - 'public/**'
+              - 'package.json'
+              - 'package-lock.json'
+              - 'vite.config.ts'
+
   test:
     name: Typecheck & unit tests
     runs-on: ubuntu-latest
@@ -35,7 +54,8 @@ jobs:
 
   build:
     name: Build & package
-    needs: test
+    needs: [test, changes]
+    if: needs.changes.outputs.rebuild == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -67,3 +87,53 @@ jobs:
           name: linkding-firefox
           path: linkding-firefox.zip
           retention-days: 14
+
+  release:
+    name: Release
+    needs: [changes, build]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.changes.outputs.rebuild == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Read package version
+        id: version
+        run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: Check if this version is already released
+        id: check
+        run: |
+          if git ls-remote --exit-code --tags origin "refs/tags/v${{ steps.version.outputs.version }}" >/dev/null 2>&1; then
+            echo "already_released=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "already_released=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Download Chrome artifact
+        if: steps.check.outputs.already_released == 'false'
+        uses: actions/download-artifact@v8
+        with:
+          name: linkding-chrome
+
+      - name: Download Firefox artifact
+        if: steps.check.outputs.already_released == 'false'
+        uses: actions/download-artifact@v8
+        with:
+          name: linkding-firefox
+
+      - name: Create GitHub release
+        if: steps.check.outputs.already_released == 'false'
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          name: v${{ steps.version.outputs.version }}
+          generate_release_notes: true
+          files: |
+            linkding-chrome.zip
+            linkding-firefox.zip
+
+      - name: Skip notice
+        if: steps.check.outputs.already_released == 'true'
+        run: echo "v${{ steps.version.outputs.version }} is already released -- bump package.json's version to publish a new release."
