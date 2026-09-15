@@ -10,7 +10,7 @@ interface BookmarkRowProps {
   isActive: boolean;
   titleMatchIndex: number;
   titleMatchLength: number;
-  onOpen: (bm: Bookmark) => void;
+  onOpen: (bm: Bookmark, modeOverride?: 'new-tab' | 'current-tab') => void;
   onEdit: (bm: Bookmark) => void;
   onFilterTag?: (tag: string) => void;
 }
@@ -70,6 +70,12 @@ export const BookmarkRow = React.forwardRef<HTMLDivElement, BookmarkRowProps>(
         role="option"
         aria-selected={isActive}
         onClick={() => onOpen(bookmark)}
+        onAuxClick={(e) => {
+          if (e.button === 1) {
+            e.preventDefault();
+            onOpen(bookmark, 'new-tab');
+          }
+        }}
         onKeyDown={(e) => {
           if (e.key === 'Enter') onOpen(bookmark);
         }}
@@ -89,7 +95,7 @@ export const BookmarkRow = React.forwardRef<HTMLDivElement, BookmarkRowProps>(
             <span className={styles.host}>{getHostname(bookmark.url)}</span>
           </div>
           {visibleTags.length > 0 && (
-            <div className={styles.tags}>
+            <div className={styles.tags} onAuxClick={(e) => e.stopPropagation()}>
               {visibleTags.map((tag) => (
                 <TagChip
                   key={tag}
@@ -117,6 +123,7 @@ export const BookmarkRow = React.forwardRef<HTMLDivElement, BookmarkRowProps>(
             e.stopPropagation();
             onEdit(bookmark);
           }}
+          onAuxClick={(e) => e.stopPropagation()}
           aria-label={`Edit bookmark: ${bookmark.title || bookmark.url}`}
           tabIndex={-1}
         >

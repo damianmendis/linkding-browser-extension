@@ -52,8 +52,24 @@ export function EditModal({
     }
   }
 
+  function handleKeyDown(e: React.KeyboardEvent) {
+    if (e.key !== 'Escape') return;
+    e.stopPropagation();
+    if (showConfirm) {
+      setShowConfirm(false);
+    } else {
+      onCancel();
+    }
+  }
+
   return (
-    <div className={styles.overlay} role="dialog" aria-modal="true" aria-label="Edit bookmark">
+    <div
+      className={styles.overlay}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Edit bookmark"
+      onKeyDown={handleKeyDown}
+    >
       <div className={styles.modal}>
         <header className={styles.header}>
           <h2 className={styles.title}>Edit bookmark</h2>

@@ -13,6 +13,8 @@ import {
   scheduleRefreshAlarm,
   clearRefreshAlarm,
   sendToBackground,
+  hasServerPermission,
+  requestServerPermission,
 } from '../lib/browser';
 import { clearCache } from '../lib/cache';
 import { validateServerUrl, validateApiToken } from '../lib/validators';
@@ -38,11 +40,12 @@ export function Options() {
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle');
   const [syncError, setSyncError] = useState('');
   const [clearStatus, setClearStatus] = useState<ClearStatus>('idle');
+  const [needsReauth, setNeedsReauth] = useState(false);
 
   // ─── Load existing settings ──────────────────────────────────────────────
 
   useEffect(() => {
-    loadSettings().then((s) => {
+    loadSettings().then(async (s) => {
       if (!s) return;
       setServerUrl(s.serverUrl ?? '');
       setApiToken(s.apiToken ?? '');
@@ -50,6 +53,14 @@ export function Options() {
       setRecentCount(s.recentCount ?? 20);
       setAutoRefreshEnabled(s.autoRefreshEnabled ?? true);
       setAutoRefreshMinutes(s.autoRefreshMinutes ?? 5);
+
+      // A server was configured previously but the extension may no longer
+      // hold host permission for it (e.g. after updating from a version
+      // that declared a blanket host_permissions entry).
+      if (s.serverUrl) {
+        const granted = await hasServerPermission(s.serverUrl);
+        setNeedsReauth(!granted);
+      }
     });
   }, []);
 
@@ -69,6 +80,13 @@ export function Options() {
       setSaveError(err instanceof Error ? err.message : 'Validation error');
       return;
     }
+
+    const granted = await requestServerPermission(normalizedUrl);
+    if (!granted) {
+      setSaveError('Permission denied. The extension needs access to your Linkding server to save these settings.');
+      return;
+    }
+    setNeedsReauth(false);
 
     const settings: Settings = {
       serverUrl: normalizedUrl,
@@ -107,6 +125,14 @@ export function Options() {
       setConnError(err instanceof Error ? err.message : 'Validation error');
       return;
     }
+
+    const granted = await requestServerPermission(normalizedUrl);
+    if (!granted) {
+      setConnStatus('error');
+      setConnError('Permission denied. Grant access to your Linkding server to connect.');
+      return;
+    }
+    setNeedsReauth(false);
 
     const resp = await sendToBackground<null>({
       type: 'TEST_CONNECTION',
@@ -162,6 +188,14 @@ export function Options() {
         {/* ── Server connection ─────────────────────────────────────────── */}
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Server connection</h2>
+
+          {needsReauth && (
+            <p className={styles.formError} role="alert">
+              This extension needs permission to reach your Linkding server again
+              (permissions were narrowed in a recent update). Click Test connection
+              or Save to re-authorize.
+            </p>
+          )}
 
           <div className={styles.field}>
             <label htmlFor="server-url">Linkding server URL</label>

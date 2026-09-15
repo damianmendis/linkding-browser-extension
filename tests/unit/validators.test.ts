@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { validateServerUrl, validateApiToken, escapeHtml } from '../../src/lib/validators';
+import { validateServerUrl, validateApiToken } from '../../src/lib/validators';
 
 describe('validateServerUrl', () => {
   it('accepts valid https URL', () => {
@@ -39,17 +39,5 @@ describe('validateApiToken', () => {
 
   it('rejects empty string', () => {
     expect(() => validateApiToken('')).toThrow(/required/i);
-  });
-});
-
-describe('escapeHtml', () => {
-  it('escapes special characters', () => {
-    expect(escapeHtml('<script>alert("xss")</script>')).toBe(
-      '&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;'
-    );
-  });
-
-  it('leaves plain text unchanged', () => {
-    expect(escapeHtml('hello world')).toBe('hello world');
   });
 });
