@@ -25,7 +25,9 @@ export interface Bookmark {
   description?: string;
   notes?: string;
   tagNames: string[];
-  isFavorite?: boolean;
+  isUnread: boolean;
+  isShared: boolean;
+  isArchived: boolean;
   created?: string;
   updated?: string;
 }

@@ -17,7 +17,7 @@ import {
   sendToBackground,
   getActiveTab,
 } from '../lib/browser';
-import { searchBookmarks, getRecent, isTagQuery } from '../lib/search';
+import { searchBookmarks, getRecent, describeQuery } from '../lib/search';
 import type {
   Bookmark,
   CacheState,
@@ -380,9 +380,11 @@ export function Popup() {
 
       <div className={styles.sectionLabel} aria-live="polite">
         {query
-          ? isTagQuery(query)
-            ? `Tagged "${query.trim().slice(1)}" — ${displayResults.length} bookmark${displayResults.length !== 1 ? 's' : ''}`
-            : `${displayResults.length} result${displayResults.length !== 1 ? 's' : ''}`
+          ? (() => {
+              const label = describeQuery(query);
+              const count = `${displayResults.length} ${label ? 'bookmark' : 'result'}${displayResults.length !== 1 ? 's' : ''}`;
+              return label ? `${label} — ${count}` : count;
+            })()
           : 'Recent bookmarks'}
       </div>
 

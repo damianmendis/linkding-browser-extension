@@ -32,6 +32,14 @@
   gap: 4px;
 }
 
+.unreadDot {
+  flex-shrink: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-accent);
+}
+
 .title {
   font-size: var(--font-size-base);
   font-weight: 500;
@@ -54,6 +62,12 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.sharedBadge {
+  flex-shrink: 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
 }
 
 .tags {

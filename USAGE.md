@@ -39,6 +39,17 @@ Matching is case-insensitive. The search runs entirely against the local cache �
 
 **Filtering by an exact tag:** type `#` followed by a tag name (e.g. `#docker`) to show only bookmarks carrying that exact tag, instead of a fuzzy match across title/URL/notes. Clicking a tag chip on any bookmark does this automatically.
 
+**Other filters** (matching Linkding's own search syntax):
+
+| Type this | Shows |
+|---|---|
+| `!unread` | Only unread bookmarks |
+| `!shared` | Only shared bookmarks |
+| `!archived` | Only archived bookmarks |
+| `!untagged` | Only bookmarks with no tags |
+
+Archived bookmarks are excluded from every other view (search, tag filters, and the default "Recent bookmarks" list) — `!archived` is the only way to see them, same as Linkding's own default list.
+
 **To clear the search:** press `Esc` or click the ✕ button in the search bar.
 
 **To focus the search bar from anywhere in the popup:** press `/`.
