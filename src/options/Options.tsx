@@ -209,7 +209,10 @@ export function Options() {
               spellCheck={false}
               required
             />
-            <span className={styles.hint}>Base URL of your self-hosted Linkding instance. Must use HTTPS.</span>
+            <span className={styles.hint}>
+              Base URL of your self-hosted Linkding instance. Must use HTTPS, unless it's a
+              local network address (localhost, a private IP, or a .local hostname).
+            </span>
           </div>
 
           <div className={styles.field}>

@@ -170,7 +170,7 @@ The test suite uses **Vitest** and covers:
 | `src/lib/validators.ts` | URL validation, token format checks |
 | `src/lib/api.ts` | API response mapping, error handling |
 
-There are **24 unit tests** in the current suite. All must pass before submitting a PR.
+There are **30 unit tests** in the current suite. All must pass before submitting a PR.
 
 ---
 
