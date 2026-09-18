@@ -1,7 +1,12 @@
 /**
  * Local client-side search over cached bookmarks.
  *
- * Scoring strategy (higher = better match):
+ * A query starting with `#` (e.g. `#docker`) is treated as an exact tag
+ * filter instead of the fuzzy scorer below -- it matches only bookmarks
+ * carrying that exact tag, not bookmarks whose title/url/notes merely
+ * contain the tag text. This is what tag-chip clicks use.
+ *
+ * Otherwise, scoring strategy (higher = better match):
  * 1. Exact prefix match on title (+4)
  * 2. Substring match on title (+3)
  * 3. Tag exact match (+2)
@@ -37,12 +42,26 @@ function hostname(url: string): string {
   }
 }
 
+/** True if `query` is tag-filter syntax (`#tagname`) rather than free text. */
+export function isTagQuery(query: string): boolean {
+  return query.trim().startsWith('#');
+}
+
 export function searchBookmarks(
   bookmarks: Bookmark[],
   query: string
 ): SearchResult[] {
   const q = query.trim();
   if (!q) return [];
+
+  if (q.startsWith('#')) {
+    const tag = q.slice(1).trim();
+    if (!tag) return [];
+    return filterByTag(bookmarks, tag)
+      .sort((a, b) => (b.created ?? '').localeCompare(a.created ?? ''))
+      .slice(0, MAX_RESULTS)
+      .map((bookmark) => ({ bookmark, titleMatchIndex: -1, titleMatchLength: 0 }));
+  }
 
   const lower = q.toLowerCase();
   const scored: ScoredBookmark[] = [];

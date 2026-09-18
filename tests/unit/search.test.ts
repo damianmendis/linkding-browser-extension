@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { searchBookmarks, getRecent } from '../../src/lib/search';
+import { searchBookmarks, getRecent, isTagQuery } from '../../src/lib/search';
 import type { Bookmark } from '../../src/lib/types';
 
 function bm(id: number, overrides: Partial<Bookmark> = {}): Bookmark {
@@ -59,6 +59,44 @@ describe('searchBookmarks', () => {
     );
     const results = searchBookmarks(many, 'test');
     expect(results.length).toBeLessThanOrEqual(50);
+  });
+
+  it('#tag filters to exact tag matches only, excluding text/notes hits', () => {
+    const results = searchBookmarks(bookmarks, '#docker');
+    // bookmark 4 mentions "docker" in its notes but isn't tagged -- must be excluded.
+    expect(results.map((r) => r.bookmark.id)).toEqual([1]);
+  });
+
+  it('#tag matching is case-insensitive', () => {
+    const results = searchBookmarks(bookmarks, '#DOCKER');
+    expect(results.map((r) => r.bookmark.id)).toEqual([1]);
+  });
+
+  it('#tag with no matches returns empty array', () => {
+    expect(searchBookmarks(bookmarks, '#nonexistent')).toHaveLength(0);
+  });
+
+  it('bare "#" with no tag name returns empty array', () => {
+    expect(searchBookmarks(bookmarks, '#')).toHaveLength(0);
+    expect(searchBookmarks(bookmarks, '#  ')).toHaveLength(0);
+  });
+
+  it('#tag results have no title highlight', () => {
+    const results = searchBookmarks(bookmarks, '#docker');
+    expect(results[0].titleMatchIndex).toBe(-1);
+    expect(results[0].titleMatchLength).toBe(0);
+  });
+});
+
+describe('isTagQuery', () => {
+  it('detects # prefix', () => {
+    expect(isTagQuery('#docker')).toBe(true);
+    expect(isTagQuery('  #docker')).toBe(true);
+  });
+
+  it('rejects plain text queries', () => {
+    expect(isTagQuery('docker')).toBe(false);
+    expect(isTagQuery('')).toBe(false);
   });
 });
 

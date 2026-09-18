@@ -37,6 +37,8 @@ Start typing in the search bar at the top of the popup. Results filter in real t
 
 Matching is case-insensitive. The search runs entirely against the local cache — there is no delay waiting for a server response.
 
+**Filtering by an exact tag:** type `#` followed by a tag name (e.g. `#docker`) to show only bookmarks carrying that exact tag, instead of a fuzzy match across title/URL/notes. Clicking a tag chip on any bookmark does this automatically.
+
 **To clear the search:** press `Esc` or click the ✕ button in the search bar.
 
 **To focus the search bar from anywhere in the popup:** press `/`.

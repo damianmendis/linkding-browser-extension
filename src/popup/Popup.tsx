@@ -17,7 +17,7 @@ import {
   sendToBackground,
   getActiveTab,
 } from '../lib/browser';
-import { searchBookmarks, getRecent } from '../lib/search';
+import { searchBookmarks, getRecent, isTagQuery } from '../lib/search';
 import type {
   Bookmark,
   CacheState,
@@ -272,7 +272,7 @@ export function Popup() {
   // ─── Tag filter ───────────────────────────────────────────────────────────
 
   function handleFilterTag(tag: string) {
-    setQuery(tag);
+    setQuery(`#${tag}`);
     searchRef.current?.focus();
   }
 
@@ -380,7 +380,9 @@ export function Popup() {
 
       <div className={styles.sectionLabel} aria-live="polite">
         {query
-          ? `${displayResults.length} result${displayResults.length !== 1 ? 's' : ''}`
+          ? isTagQuery(query)
+            ? `Tagged "${query.trim().slice(1)}" — ${displayResults.length} bookmark${displayResults.length !== 1 ? 's' : ''}`
+            : `${displayResults.length} result${displayResults.length !== 1 ? 's' : ''}`
           : 'Recent bookmarks'}
       </div>
 
