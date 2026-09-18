@@ -33,6 +33,9 @@ function bm(id: number, overrides: Partial<Bookmark> = {}): Bookmark {
     url: `https://example.com/${id}`,
     title: `Bookmark ${id}`,
     tagNames: [],
+    isUnread: false,
+    isShared: false,
+    isArchived: false,
     created: new Date(1000 * id).toISOString(),
     ...overrides,
   };

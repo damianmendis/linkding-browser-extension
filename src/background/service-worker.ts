@@ -11,7 +11,9 @@ import { loadSettings, saveCache, loadCache } from '../lib/browser';
 import {
   testConnection as apiTestConnection,
   fetchAllBookmarks,
+  fetchAllArchivedBookmarks,
   fetchBookmarksModifiedSince,
+  fetchArchivedBookmarksModifiedSince,
   fetchAllTags,
   createBookmark as apiCreateBookmark,
   updateBookmark as apiUpdateBookmark,
@@ -56,12 +58,13 @@ async function runFullSync(): Promise<CacheState> {
     throw new Error('Not configured. Open settings to connect your Linkding server.');
   }
 
-  const [bookmarks, tags] = await Promise.all([
+  const [active, archived, tags] = await Promise.all([
     fetchAllBookmarks(settings.serverUrl, settings.apiToken),
+    fetchAllArchivedBookmarks(settings.serverUrl, settings.apiToken),
     fetchAllTags(settings.serverUrl, settings.apiToken),
   ]);
 
-  return setCacheFromSync(bookmarks, tags);
+  return setCacheFromSync([...active, ...archived], tags);
 }
 
 async function runIncrementalSync(): Promise<CacheState> {
@@ -78,12 +81,13 @@ async function runIncrementalSync(): Promise<CacheState> {
     return runFullSync();
   }
 
-  const [changed, tags] = await Promise.all([
+  const [changedActive, changedArchived, tags] = await Promise.all([
     fetchBookmarksModifiedSince(settings.serverUrl, settings.apiToken, current.lastSyncAt),
+    fetchArchivedBookmarksModifiedSince(settings.serverUrl, settings.apiToken, current.lastSyncAt),
     fetchAllTags(settings.serverUrl, settings.apiToken),
   ]);
 
-  return mergeBookmarksIntoCache(changed, tags);
+  return mergeBookmarksIntoCache([...changedActive, ...changedArchived], tags);
 }
 
 // ─── Message handler ──────────────────────────────────────────────────────────

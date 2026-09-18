@@ -25,7 +25,9 @@ export function mapApiBookmark(b: ApiBookmark): Bookmark {
     description: b.description || undefined,
     notes: b.notes || undefined,
     tagNames: b.tag_names ?? [],
-    isFavorite: false, // Linkding doesn't have a favorites field in its REST API
+    isUnread: b.unread,
+    isShared: b.shared,
+    isArchived: b.is_archived,
     created: b.date_added,
     updated: b.date_modified,
   };
@@ -92,14 +94,22 @@ export async function testConnection(
   }
 }
 
-export async function fetchAllBookmarks(
+/**
+ * Paginates through a Linkding bookmarks list endpoint (either the main
+ * `/api/bookmarks/` collection or `/api/bookmarks/archived/`, which take
+ * the same query parameters -- https://linkding.link/api/) until `next`
+ * is exhausted.
+ */
+async function fetchBookmarkPages(
   serverUrl: string,
-  apiToken: string
+  apiToken: string,
+  path: 'bookmarks' | 'bookmarks/archived',
+  query: string
 ): Promise<Bookmark[]> {
   const base = normalizeBase(serverUrl);
   const headers = buildHeaders(apiToken);
   const bookmarks: Bookmark[] = [];
-  let url: string | null = `${base}/api/bookmarks/?limit=100`;
+  let url: string | null = `${base}/api/${path}/?limit=100${query}`;
 
   while (url) {
     const resp = await fetchWithTimeout(url, { method: 'GET', headers });
@@ -112,33 +122,36 @@ export async function fetchAllBookmarks(
   return bookmarks;
 }
 
+export async function fetchAllBookmarks(serverUrl: string, apiToken: string): Promise<Bookmark[]> {
+  return fetchBookmarkPages(serverUrl, apiToken, 'bookmarks', '');
+}
+
+/** Archived bookmarks live in a separate collection, excluded from fetchAllBookmarks(). */
+export async function fetchAllArchivedBookmarks(serverUrl: string, apiToken: string): Promise<Bookmark[]> {
+  return fetchBookmarkPages(serverUrl, apiToken, 'bookmarks/archived', '');
+}
+
 /**
  * Fetches only bookmarks added or modified since `since` (ISO 8601),
- * via Linkding's `modified_since` filter (https://linkding.link/api/).
- * Note: Linkding's API has no endpoint for bookmarks *deleted* since a
- * given time, so this alone can't detect server-side deletions -- callers
- * need to fall back to fetchAllBookmarks() periodically to reconcile those.
+ * via Linkding's `modified_since` filter. Note: Linkding's API has no
+ * endpoint for bookmarks *deleted* since a given time, so this alone
+ * can't detect server-side deletions -- callers need to fall back to a
+ * full fetch periodically to reconcile those.
  */
 export async function fetchBookmarksModifiedSince(
   serverUrl: string,
   apiToken: string,
   since: string
 ): Promise<Bookmark[]> {
-  const base = normalizeBase(serverUrl);
-  const headers = buildHeaders(apiToken);
-  const bookmarks: Bookmark[] = [];
-  let url: string | null =
-    `${base}/api/bookmarks/?limit=100&modified_since=${encodeURIComponent(since)}`;
+  return fetchBookmarkPages(serverUrl, apiToken, 'bookmarks', `&modified_since=${encodeURIComponent(since)}`);
+}
 
-  while (url) {
-    const resp = await fetchWithTimeout(url, { method: 'GET', headers });
-    if (!resp.ok) throw new Error(`Fetch bookmarks failed: ${resp.status}`);
-    const data: ApiPaginatedResponse<ApiBookmark> = await resp.json();
-    bookmarks.push(...data.results.map(mapApiBookmark));
-    url = data.next;
-  }
-
-  return bookmarks;
+export async function fetchArchivedBookmarksModifiedSince(
+  serverUrl: string,
+  apiToken: string,
+  since: string
+): Promise<Bookmark[]> {
+  return fetchBookmarkPages(serverUrl, apiToken, 'bookmarks/archived', `&modified_since=${encodeURIComponent(since)}`);
 }
 
 export async function fetchAllTags(

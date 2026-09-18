@@ -171,7 +171,7 @@ The test suite uses **Vitest** and covers:
 | `src/lib/api.ts` | API response mapping, pagination, error handling |
 | `src/lib/cache.ts` | Incremental merge, storage-quota warning, upsert/remove |
 
-There are **36 unit tests** in the current suite. All must pass before submitting a PR.
+There are **39 unit tests** in the current suite. All must pass before submitting a PR.
 
 ---
 
@@ -211,6 +211,8 @@ The initial sync and any user-triggered refresh (`SYNC_BOOKMARKS`) always do a *
 
 Linkding's API has no way to list bookmarks *deleted* since a given time, so the incremental path alone can never learn about a deletion — it would linger in the cache forever. `runIncrementalSync()` tracks `lastFullSyncAt` and automatically falls back to a full sync at least once every 24h to reconcile that, bounding how stale a deletion can get without requiring a full refetch on every automatic cycle.
 
+Archived bookmarks live in a separate collection (`GET /api/bookmarks/archived/`, excluded from the main `/api/bookmarks/` list) that takes the same parameters, including `modified_since` -- both sync paths fetch it alongside the main collection and merge the results by id, same as everything else.
+
 ### Browser abstraction
 
 `src/lib/browser.ts` wraps `webextension-polyfill` to provide a consistent API surface. Import from here rather than using `chrome.*` or `browser.*` directly — this is what keeps the codebase single-source for both targets.
@@ -240,7 +242,6 @@ Settings, connection test, cache sync, toolbar popup, instant search, recent boo
 
 | Feature | Notes |
 |---|---|
-| Favorites / starred view | Linkding API supports it; UI deferred |
 | Tag tree / hierarchy | Complex UI, deferred |
 | Fuzzy / ranked search | Current scorer is deterministic and exact-match weighted |
 | Command palette | Nice-to-have; out of v1 scope |
