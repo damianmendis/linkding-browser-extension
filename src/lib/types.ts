@@ -36,8 +36,19 @@ export interface CacheState {
   bookmarks: Bookmark[];
   tags: string[];
   lastSyncAt?: string;
+  /**
+   * Last time a *full* sync completed. Linkding's API has no way to list
+   * bookmarks deleted since a given time, so incremental (modified_since)
+   * syncs can't detect deletions -- this timestamp drives a periodic
+   * full-resync fallback that reconciles them.
+   */
+  lastFullSyncAt?: string;
   lastSyncStatus: 'idle' | 'success' | 'error';
   lastError?: string;
+  /** Approximate serialized size of this cache, in bytes. */
+  cacheBytes?: number;
+  /** True when cacheBytes is approaching browser.storage.local's quota. */
+  storageWarning?: boolean;
   schemaVersion: 1;
 }
 

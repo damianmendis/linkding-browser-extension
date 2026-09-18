@@ -51,6 +51,11 @@ export function StatusBar({ cache, isSyncing, isOffline }: StatusBarProps) {
       <div className={styles.bar} role="status" aria-live="polite">
         <span className={`${styles.dot} ${styles.ok}`} />
         Synced {formatRelative(cache.lastSyncAt)} · {cache.bookmarks.length} bookmarks
+        {cache.storageWarning && (
+          <span className={styles.warning} title="Local storage is approaching the browser's ~10MB limit for this extension">
+            {' '}· ⚠ storage nearly full
+          </span>
+        )}
       </div>
     );
   }

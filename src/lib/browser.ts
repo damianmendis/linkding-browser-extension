@@ -25,7 +25,20 @@ export async function loadCache(): Promise<CacheState | null> {
 }
 
 export async function saveCache(cache: CacheState): Promise<void> {
-  await browser.storage.local.set({ [STORAGE_KEYS.CACHE]: cache });
+  try {
+    await browser.storage.local.set({ [STORAGE_KEYS.CACHE]: cache });
+  } catch (err) {
+    const raw = err instanceof Error ? err.message : String(err);
+    if (/quota/i.test(raw)) {
+      throw new Error(
+        'Bookmark cache is too large for the browser\'s local storage limit (about 10MB). ' +
+        'This usually means a very large bookmark library, possibly with long notes or ' +
+        'descriptions. The extension currently caches every bookmark in full; trimming ' +
+        'notes/descriptions on the largest bookmarks in Linkding may help.'
+      );
+    }
+    throw err;
+  }
 }
 
 export async function clearCache(): Promise<void> {
