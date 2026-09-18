@@ -38,7 +38,11 @@ linkding-browser-extension/
 │   ├── background/
 │   │   └── service-worker.ts  # All network calls, alarm management, message handling
 │   ├── popup/
-│   │   ├── Popup.tsx          # Main popup UI
+│   │   ├── Popup.tsx          # Container: app-wide state, service-worker messaging, view routing
+│   │   ├── views/
+│   │   │   ├── MainView.tsx         # Search, keyboard nav, bookmark list
+│   │   │   ├── AddBookmarkView.tsx  # "Save current page" form
+│   │   │   └── UnconfiguredView.tsx # First-run "connect your server" screen
 │   │   └── popup.css
 │   ├── options/
 │   │   ├── Options.tsx        # Settings page
@@ -176,6 +180,10 @@ There are **63 unit tests** in the current suite. All must pass before submittin
 ---
 
 ## Architecture notes
+
+### Popup: container vs. views
+
+`Popup.tsx` is a container: it owns app-wide state (settings, cache, current view, offline flag) and every handler that talks to the background service worker. It renders one of `views/UnconfiguredView.tsx`, `views/AddBookmarkView.tsx`, `views/MainView.tsx`, or `EditModal` based on the current view. Each view owns only its own UI-local state (search query, form fields, keyboard nav, refs) and receives data/callbacks as props -- it never calls `sendToBackground()` itself. When adding a new view, follow this split rather than growing `Popup.tsx`.
 
 ### All network calls live in the service worker
 
