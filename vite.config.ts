@@ -1,8 +1,9 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
-import { copyFileSync, mkdirSync, readdirSync, rmSync, existsSync } from 'fs';
+import { copyFileSync, mkdirSync, readdirSync, rmSync, existsSync, readFileSync, writeFileSync } from 'fs';
 import type { Plugin } from 'vite';
+import pkg from './package.json';
 
 // After Vite writes output, fix up the directory structure so the manifest
 // references work correctly. Also copies icon assets.
@@ -11,6 +12,18 @@ function webExtensionPlugin(isFirefox: boolean): Plugin {
     name: 'webextension-fixup',
     closeBundle() {
       const outDir = resolve(__dirname, isFirefox ? 'dist-firefox' : 'dist-chrome');
+
+      // manifest.json (in public/) hardcodes its own version, which used
+      // to drift from package.json (the source of truth for releases --
+      // the CI release job tags/publishes off package.json's version).
+      // Stamp the built manifest with that version so the two can't
+      // diverge again.
+      const manifestPath = `${outDir}/manifest.json`;
+      if (existsSync(manifestPath)) {
+        const manifest = JSON.parse(readFileSync(manifestPath, 'utf-8'));
+        manifest.version = pkg.version;
+        writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n');
+      }
 
       // Move HTML files up from src/popup → popup and src/options → options
       const moves: [string, string][] = [
