@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { validateServerUrl, validateApiToken } from '../../src/lib/validators';
+import { validateServerUrl, validateApiToken, isPrivateOrLocalHost } from '../../src/lib/validators';
 
 describe('validateServerUrl', () => {
   it('accepts valid https URL', () => {
@@ -25,6 +25,44 @@ describe('validateServerUrl', () => {
 
   it('rejects ftp protocol', () => {
     expect(() => validateServerUrl('ftp://example.com')).toThrow(/http/i);
+  });
+
+  it('accepts http on local/private hosts', () => {
+    expect(validateServerUrl('http://192.168.1.50:9090')).toBe('http://192.168.1.50:9090');
+    expect(validateServerUrl('http://localhost:9090')).toBe('http://localhost:9090');
+    expect(validateServerUrl('http://linkding.local')).toBe('http://linkding.local');
+  });
+});
+
+describe('isPrivateOrLocalHost', () => {
+  it('accepts localhost and loopback', () => {
+    expect(isPrivateOrLocalHost('localhost')).toBe(true);
+    expect(isPrivateOrLocalHost('127.0.0.1')).toBe(true);
+    expect(isPrivateOrLocalHost('127.5.5.5')).toBe(true);
+    expect(isPrivateOrLocalHost('::1')).toBe(true);
+  });
+
+  it('accepts private IPv4 ranges', () => {
+    expect(isPrivateOrLocalHost('10.1.2.3')).toBe(true);
+    expect(isPrivateOrLocalHost('172.16.0.1')).toBe(true);
+    expect(isPrivateOrLocalHost('172.31.255.255')).toBe(true);
+    expect(isPrivateOrLocalHost('192.168.1.50')).toBe(true);
+    expect(isPrivateOrLocalHost('169.254.1.1')).toBe(true);
+  });
+
+  it('rejects public IPv4 addresses', () => {
+    expect(isPrivateOrLocalHost('8.8.8.8')).toBe(false);
+    expect(isPrivateOrLocalHost('172.32.0.1')).toBe(false); // just outside 172.16.0.0/12
+    expect(isPrivateOrLocalHost('1.1.1.1')).toBe(false);
+  });
+
+  it('accepts .local mDNS hostnames', () => {
+    expect(isPrivateOrLocalHost('linkding.local')).toBe(true);
+    expect(isPrivateOrLocalHost('homelab.local')).toBe(true);
+  });
+
+  it('rejects public hostnames', () => {
+    expect(isPrivateOrLocalHost('links.example.com')).toBe(false);
   });
 });
 

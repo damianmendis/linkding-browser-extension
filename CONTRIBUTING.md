@@ -171,7 +171,7 @@ The test suite uses **Vitest** and covers:
 | `src/lib/api.ts` | API response mapping, pagination, error handling |
 | `src/lib/cache.ts` | Incremental merge, storage-quota warning, upsert/remove |
 
-There are **39 unit tests** in the current suite. All must pass before submitting a PR.
+There are **63 unit tests** in the current suite. All must pass before submitting a PR.
 
 ---
 
@@ -212,6 +212,10 @@ The initial sync and any user-triggered refresh (`SYNC_BOOKMARKS`) always do a *
 Linkding's API has no way to list bookmarks *deleted* since a given time, so the incremental path alone can never learn about a deletion — it would linger in the cache forever. `runIncrementalSync()` tracks `lastFullSyncAt` and automatically falls back to a full sync at least once every 24h to reconcile that, bounding how stale a deletion can get without requiring a full refetch on every automatic cycle.
 
 Archived bookmarks live in a separate collection (`GET /api/bookmarks/archived/`, excluded from the main `/api/bookmarks/` list) that takes the same parameters, including `modified_since` -- both sync paths fetch it alongside the main collection and merge the results by id, same as everything else.
+
+### Search query syntax
+
+`searchBookmarks()` (`src/lib/search.ts`) recognizes a handful of Linkding-style modifiers ahead of the free-text scorer: `#tag` (exact tag match, used by tag-chip clicks), `!unread`, `!shared`, `!archived`, `!untagged`. `parseQuery()` is the single place that decides which mode a query string is in; `describeQuery()` turns that into the label shown above the result list. Archived bookmarks are excluded from every mode except `!archived` itself, matching Linkding's own default list.
 
 ### Browser abstraction
 
