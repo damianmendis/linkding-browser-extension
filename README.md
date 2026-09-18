@@ -2,7 +2,7 @@
 
 A lightweight browser extension for [Linkding](https://github.com/sissbruecker/linkding) — the self-hosted bookmark manager. Search, open, and save bookmarks directly from your toolbar without leaving the page you're on.
 
-![Version](https://img.shields.io/badge/version-1.0.2-blue) ![License](https://img.shields.io/badge/license-MIT-green) ![MV3](https://img.shields.io/badge/manifest-v3-orange)
+![Version](https://img.shields.io/github/v/release/damianmendis/linkding-browser-extension?label=version) ![License](https://img.shields.io/badge/license-MIT-green) ![MV3](https://img.shields.io/badge/manifest-v3-orange)
 
 ---
 
@@ -29,7 +29,7 @@ A lightweight browser extension for [Linkding](https://github.com/sissbruecker/l
 
 ### Chrome / Edge
 
-1. Download **[linkding-chrome-v1.0.2.zip](https://github.com/damianmendis/linkding-browser-extension/releases/download/v1.0.2/linkding-chrome-v1.0.2.zip)** from the latest release
+1. Download **[linkding-chrome.zip](https://github.com/damianmendis/linkding-browser-extension/releases/latest/download/linkding-chrome.zip)** (always the latest release)
 2. Unzip the file
 3. Go to `chrome://extensions` (or `edge://extensions`)
 4. Enable **Developer mode** (top-right toggle)
@@ -37,7 +37,7 @@ A lightweight browser extension for [Linkding](https://github.com/sissbruecker/l
 
 ### Firefox
 
-1. Download **[linkding-firefox-v1.0.2.zip](https://github.com/damianmendis/linkding-browser-extension/releases/download/v1.0.2/linkding-firefox-v1.0.2.zip)** from the latest release
+1. Download **[linkding-firefox.zip](https://github.com/damianmendis/linkding-browser-extension/releases/latest/download/linkding-firefox.zip)** (always the latest release)
 2. Go to `about:debugging#/runtime/this-firefox`
 3. Click **Load Temporary Add-on**
 4. Select the zip file directly
@@ -102,7 +102,7 @@ All data stays between your browser and your Linkding server. The extension does
 
 See the [Releases page](https://github.com/damianmendis/linkding-browser-extension/releases) for packaged downloads and changelogs.
 
-Current release: **[v1.0.2](https://github.com/damianmendis/linkding-browser-extension/releases/tag/v1.0.2)**
+Current release: **[latest](https://github.com/damianmendis/linkding-browser-extension/releases/latest)**
 
 ---
 

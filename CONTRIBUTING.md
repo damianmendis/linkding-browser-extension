@@ -62,8 +62,7 @@ linkding-browser-extension/
 ├── scripts/
 │   ├── package-chrome.sh      # Produces linkding-chrome.zip
 │   └── package-firefox.sh     # Produces linkding-firefox.zip
-├── vite.config.chrome.ts
-├── vite.config.firefox.ts
+├── vite.config.ts             # Single config, Chrome/Firefox selected via --mode
 ├── tsconfig.json
 └── package.json
 ```
@@ -88,7 +87,7 @@ npm install
 ### Build for Chrome (watch mode)
 
 ```bash
-npm run dev:chrome
+npm run dev
 ```
 
 Vite watches for file changes and rebuilds into `dist-chrome/` automatically.
@@ -101,8 +100,10 @@ Vite watches for file changes and rebuilds into `dist-chrome/` automatically.
 
 ### Build for Firefox (watch mode)
 
+There's no dedicated `npm` script for this yet — pass `--watch` through to Vite directly:
+
 ```bash
-npm run dev:firefox
+npx vite build --watch --mode firefox
 ```
 
 Rebuilds into `dist-firefox/` on file changes.
@@ -169,7 +170,7 @@ The test suite uses **Vitest** and covers:
 | `src/lib/validators.ts` | URL validation, token format checks |
 | `src/lib/api.ts` | API response mapping, error handling |
 
-There are **26 unit tests** in the current suite. All must pass before submitting a PR.
+There are **24 unit tests** in the current suite. All must pass before submitting a PR.
 
 ---
 
@@ -246,7 +247,7 @@ Settings, connection test, cache sync, toolbar popup, instant search, recent boo
 
 1. Fork the repository and create a branch from `main`
 2. Make your changes — keep PRs focused on a single concern
-3. Run `npm test` and ensure all 26 tests pass
+3. Run `npm test` and ensure all tests pass
 4. Build for both targets (`npm run build:chrome && npm run build:firefox`) and test manually
 5. Open a pull request with a clear description of what changed and why
 
