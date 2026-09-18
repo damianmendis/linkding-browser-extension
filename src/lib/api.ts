@@ -25,7 +25,9 @@ export function mapApiBookmark(b: ApiBookmark): Bookmark {
     description: b.description || undefined,
     notes: b.notes || undefined,
     tagNames: b.tag_names ?? [],
-    isFavorite: false, // Linkding doesn't have a favorites field in its REST API
+    isUnread: b.unread,
+    isShared: b.shared,
+    isArchived: b.is_archived,
     created: b.date_added,
     updated: b.date_modified,
   };

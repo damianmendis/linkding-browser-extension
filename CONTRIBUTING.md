@@ -170,7 +170,7 @@ The test suite uses **Vitest** and covers:
 | `src/lib/validators.ts` | URL validation, token format checks |
 | `src/lib/api.ts` | API response mapping, error handling |
 
-There are **30 unit tests** in the current suite. All must pass before submitting a PR.
+There are **48 unit tests** in the current suite. All must pass before submitting a PR.
 
 ---
 
@@ -202,6 +202,10 @@ Use `sendToBackground()` from `src/lib/browser.ts` to send messages — it wraps
 
 Bookmarks are stored in `browser.storage.local` under a single key. The cache is populated on sync and updated optimistically on create/edit/delete. It is the sole source of truth for popup rendering — the popup never waits for a network call to display content.
 
+### Search query syntax
+
+`searchBookmarks()` (`src/lib/search.ts`) recognizes a handful of Linkding-style modifiers ahead of the free-text scorer: `#tag` (exact tag match, used by tag-chip clicks), `!unread`, `!shared`, `!archived`, `!untagged`. `parseQuery()` is the single place that decides which mode a query string is in; `describeQuery()` turns that into the label shown above the result list. Archived bookmarks are excluded from every mode except `!archived` itself, matching Linkding's own default list.
+
 ### Browser abstraction
 
 `src/lib/browser.ts` wraps `webextension-polyfill` to provide a consistent API surface. Import from here rather than using `chrome.*` or `browser.*` directly — this is what keeps the codebase single-source for both targets.
@@ -231,7 +235,6 @@ Settings, connection test, cache sync, toolbar popup, instant search, recent boo
 
 | Feature | Notes |
 |---|---|
-| Favorites / starred view | Linkding API supports it; UI deferred |
 | Tag tree / hierarchy | Complex UI, deferred |
 | Fuzzy / ranked search | Current scorer is deterministic and exact-match weighted |
 | Command palette | Nice-to-have; out of v1 scope |

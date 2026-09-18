@@ -83,6 +83,9 @@ export const BookmarkRow = React.forwardRef<HTMLDivElement, BookmarkRowProps>(
       >
         <div className={styles.content}>
           <div className={styles.titleRow}>
+            {bookmark.isUnread && (
+              <span className={styles.unreadDot} title="Unread" aria-label="Unread" role="img" />
+            )}
             <span className={styles.title}>
               <HighlightedTitle
                 title={bookmark.title || bookmark.url}
@@ -93,6 +96,9 @@ export const BookmarkRow = React.forwardRef<HTMLDivElement, BookmarkRowProps>(
           </div>
           <div className={styles.meta}>
             <span className={styles.host}>{getHostname(bookmark.url)}</span>
+            {bookmark.isShared && (
+              <span className={styles.sharedBadge} title="Shared">🔗 Shared</span>
+            )}
           </div>
           {visibleTags.length > 0 && (
             <div className={styles.tags} onAuxClick={(e) => e.stopPropagation()}>
