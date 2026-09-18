@@ -112,6 +112,35 @@ export async function fetchAllBookmarks(
   return bookmarks;
 }
 
+/**
+ * Fetches only bookmarks added or modified since `since` (ISO 8601),
+ * via Linkding's `modified_since` filter (https://linkding.link/api/).
+ * Note: Linkding's API has no endpoint for bookmarks *deleted* since a
+ * given time, so this alone can't detect server-side deletions -- callers
+ * need to fall back to fetchAllBookmarks() periodically to reconcile those.
+ */
+export async function fetchBookmarksModifiedSince(
+  serverUrl: string,
+  apiToken: string,
+  since: string
+): Promise<Bookmark[]> {
+  const base = normalizeBase(serverUrl);
+  const headers = buildHeaders(apiToken);
+  const bookmarks: Bookmark[] = [];
+  let url: string | null =
+    `${base}/api/bookmarks/?limit=100&modified_since=${encodeURIComponent(since)}`;
+
+  while (url) {
+    const resp = await fetchWithTimeout(url, { method: 'GET', headers });
+    if (!resp.ok) throw new Error(`Fetch bookmarks failed: ${resp.status}`);
+    const data: ApiPaginatedResponse<ApiBookmark> = await resp.json();
+    bookmarks.push(...data.results.map(mapApiBookmark));
+    url = data.next;
+  }
+
+  return bookmarks;
+}
+
 export async function fetchAllTags(
   serverUrl: string,
   apiToken: string

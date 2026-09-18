@@ -11,12 +11,20 @@ import { loadSettings, saveCache, loadCache } from '../lib/browser';
 import {
   testConnection as apiTestConnection,
   fetchAllBookmarks,
+  fetchBookmarksModifiedSince,
   fetchAllTags,
   createBookmark as apiCreateBookmark,
   updateBookmark as apiUpdateBookmark,
   deleteBookmark as apiDeleteBookmark,
 } from '../lib/api';
-import { setCacheFromSync, setCacheError, upsertBookmarkInCache, removeBookmarkFromCache } from '../lib/cache';
+import {
+  getCache,
+  setCacheFromSync,
+  mergeBookmarksIntoCache,
+  setCacheError,
+  upsertBookmarkInCache,
+  removeBookmarkFromCache,
+} from '../lib/cache';
 import type { BgRequest, BgResponse, CacheState, Bookmark } from '../lib/types';
 import { EMPTY_CACHE } from '../lib/types';
 
@@ -30,9 +38,19 @@ function fail(error: string): BgResponse<never> {
   return { ok: false, error };
 }
 
-// ─── Full sync ────────────────────────────────────────────────────────────────
+// ─── Sync ─────────────────────────────────────────────────────────────────────
+//
+// Linkding's API has no way to list bookmarks *deleted* since a given time,
+// so an incremental (modified_since) sync alone can't detect those -- it
+// would let deleted bookmarks linger in the local cache indefinitely. So:
+// full syncs are used for the initial sync and any user-triggered refresh
+// (SYNC_BOOKMARKS), and also run periodically in place of the automatic
+// background refresh to reconcile deletions, bounding how stale the cache
+// can get for that one case. Everything else uses the cheap incremental path.
 
-async function runSync(): Promise<CacheState> {
+const FULL_RESYNC_INTERVAL_MS = 24 * 60 * 60 * 1000; // 24h
+
+async function runFullSync(): Promise<CacheState> {
   const settings = await loadSettings();
   if (!settings?.serverUrl || !settings?.apiToken) {
     throw new Error('Not configured. Open settings to connect your Linkding server.');
@@ -44,6 +62,28 @@ async function runSync(): Promise<CacheState> {
   ]);
 
   return setCacheFromSync(bookmarks, tags);
+}
+
+async function runIncrementalSync(): Promise<CacheState> {
+  const settings = await loadSettings();
+  if (!settings?.serverUrl || !settings?.apiToken) {
+    throw new Error('Not configured. Open settings to connect your Linkding server.');
+  }
+
+  const current = await getCache();
+  const lastFullSyncMs = current.lastFullSyncAt ? new Date(current.lastFullSyncAt).getTime() : 0;
+  const dueForFullSync = Date.now() - lastFullSyncMs > FULL_RESYNC_INTERVAL_MS;
+
+  if (dueForFullSync || current.bookmarks.length === 0 || !current.lastSyncAt) {
+    return runFullSync();
+  }
+
+  const [changed, tags] = await Promise.all([
+    fetchBookmarksModifiedSince(settings.serverUrl, settings.apiToken, current.lastSyncAt),
+    fetchAllTags(settings.serverUrl, settings.apiToken),
+  ]);
+
+  return mergeBookmarksIntoCache(changed, tags);
 }
 
 // ─── Message handler ──────────────────────────────────────────────────────────
@@ -60,7 +100,7 @@ browser.runtime.onMessage.addListener(
           .catch((e: Error) => fail(e.message));
 
       case 'SYNC_BOOKMARKS':
-        return runSync()
+        return runFullSync()
           .then((cache) => ok(cache))
           .catch(async (e: Error) => {
             await setCacheError(e.message);
@@ -123,9 +163,10 @@ browser.runtime.onMessage.addListener(
 browser.alarms.onAlarm.addListener(async (alarm) => {
   if (alarm.name === 'auto-refresh') {
     try {
-      await runSync();
-    } catch {
-      // Silently record error in cache state; popup will show it on next open
+      await runIncrementalSync();
+    } catch (e) {
+      // Record error in cache state; popup will show it on next open
+      await setCacheError(e instanceof Error ? e.message : String(e));
     }
   }
 });
@@ -149,5 +190,5 @@ browser.runtime.onStartup.addListener(initializeAlarm);
 browser.runtime.onInstalled.addListener(async () => {
   await initializeAlarm();
   // Attempt initial sync (will no-op if not yet configured)
-  try { await runSync(); } catch { /* not configured yet */ }
+  try { await runFullSync(); } catch { /* not configured yet */ }
 });

@@ -168,9 +168,10 @@ The test suite uses **Vitest** and covers:
 |---|---|
 | `src/lib/search.ts` | Search scoring, ranking, edge cases |
 | `src/lib/validators.ts` | URL validation, token format checks |
-| `src/lib/api.ts` | API response mapping, error handling |
+| `src/lib/api.ts` | API response mapping, pagination, error handling |
+| `src/lib/cache.ts` | Incremental merge, storage-quota warning, upsert/remove |
 
-There are **24 unit tests** in the current suite. All must pass before submitting a PR.
+There are **36 unit tests** in the current suite. All must pass before submitting a PR.
 
 ---
 
@@ -189,7 +190,7 @@ Messages between the popup/options and the service worker use a typed protocol d
 | Message type | Direction | Purpose |
 |---|---|---|
 | `TEST_CONNECTION` | popup/options → SW | Verify server URL and token |
-| `SYNC_BOOKMARKS` | popup/options → SW | Trigger a full cache refresh |
+| `SYNC_BOOKMARKS` | popup/options → SW | Trigger a full cache refresh (always full; the periodic background alarm uses a separate incremental path -- see below) |
 | `GET_CACHE` | popup → SW | Retrieve cached bookmarks for display |
 | `CLEAR_CACHE` | options → SW | Wipe local bookmark cache |
 | `CREATE_BOOKMARK` | popup → SW | Add a new bookmark to Linkding |
@@ -201,6 +202,14 @@ Use `sendToBackground()` from `src/lib/browser.ts` to send messages — it wraps
 ### Local cache
 
 Bookmarks are stored in `browser.storage.local` under a single key. The cache is populated on sync and updated optimistically on create/edit/delete. It is the sole source of truth for popup rendering — the popup never waits for a network call to display content.
+
+`browser.storage.local` has a ~10MB quota without the (more invasive) `unlimitedStorage` permission. Every cache write estimates its own serialized size and sets `storageWarning` once it crosses 80% of that quota (surfaced in the popup's status bar); a write that actually exceeds the quota fails with a descriptive error instead of an opaque one (see `saveCache()` in `src/lib/browser.ts`).
+
+### Sync: full vs. incremental
+
+The initial sync and any user-triggered refresh (`SYNC_BOOKMARKS`) always do a **full** sync (`runFullSync()` in `service-worker.ts`) — fetch every bookmark and tag, replace the cache. The periodic background alarm instead runs `runIncrementalSync()`, which fetches only bookmarks changed since the last sync via Linkding's `modified_since` query parameter and merges them into the existing cache by id.
+
+Linkding's API has no way to list bookmarks *deleted* since a given time, so the incremental path alone can never learn about a deletion — it would linger in the cache forever. `runIncrementalSync()` tracks `lastFullSyncAt` and automatically falls back to a full sync at least once every 24h to reconcile that, bounding how stale a deletion can get without requiring a full refetch on every automatic cycle.
 
 ### Browser abstraction
 

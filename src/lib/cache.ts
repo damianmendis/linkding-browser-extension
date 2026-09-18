@@ -6,6 +6,28 @@ import { loadCache, saveCache, clearCache as browserClearCache } from './browser
 import type { Bookmark, CacheState } from './types';
 import { EMPTY_CACHE } from './types';
 
+// chrome.storage.local's default quota without the (more invasive)
+// unlimitedStorage permission. Warn well before hitting it so a sync
+// failure doesn't come as a surprise.
+const STORAGE_QUOTA_BYTES = 10 * 1024 * 1024;
+const STORAGE_WARNING_RATIO = 0.8;
+
+function estimateBytes(state: CacheState): number {
+  return new TextEncoder().encode(JSON.stringify(state)).length;
+}
+
+/** Attaches cacheBytes/storageWarning based on `next`'s serialized size, then saves it. */
+async function persist(next: CacheState): Promise<CacheState> {
+  const cacheBytes = estimateBytes(next);
+  const withUsage: CacheState = {
+    ...next,
+    cacheBytes,
+    storageWarning: cacheBytes >= STORAGE_QUOTA_BYTES * STORAGE_WARNING_RATIO,
+  };
+  await saveCache(withUsage);
+  return withUsage;
+}
+
 export async function getCache(): Promise<CacheState> {
   const stored = await loadCache();
   if (!stored || stored.schemaVersion !== 1) return { ...EMPTY_CACHE };
@@ -17,32 +39,56 @@ export async function updateCacheBookmarks(
   tags?: string[]
 ): Promise<CacheState> {
   const current = await getCache();
-  const next: CacheState = {
+  return persist({
     ...current,
     bookmarks: updater(current.bookmarks),
     tags: tags ?? current.tags,
     lastSyncAt: new Date().toISOString(),
     lastSyncStatus: 'success',
     lastError: undefined,
-  };
-  await saveCache(next);
-  return next;
+  });
 }
 
+/** Replaces the entire cache -- used after a full sync. */
 export async function setCacheFromSync(
   bookmarks: Bookmark[],
   tags: string[]
 ): Promise<CacheState> {
-  const next: CacheState = {
+  const now = new Date().toISOString();
+  return persist({
     bookmarks,
+    tags,
+    lastSyncAt: now,
+    lastFullSyncAt: now,
+    lastSyncStatus: 'success',
+    lastError: undefined,
+    schemaVersion: 1,
+  });
+}
+
+/**
+ * Upserts a set of added/modified bookmarks into the existing cache --
+ * used after an incremental (modified_since) sync. Does NOT remove any
+ * bookmarks, since Linkding's API has no way to report deletions; a
+ * periodic full sync (see lastFullSyncAt) is what reconciles those.
+ */
+export async function mergeBookmarksIntoCache(
+  changed: Bookmark[],
+  tags: string[]
+): Promise<CacheState> {
+  const current = await getCache();
+  const byId = new Map(current.bookmarks.map((b) => [b.id, b]));
+  for (const bookmark of changed) {
+    byId.set(bookmark.id, bookmark);
+  }
+  return persist({
+    ...current,
+    bookmarks: Array.from(byId.values()),
     tags,
     lastSyncAt: new Date().toISOString(),
     lastSyncStatus: 'success',
     lastError: undefined,
-    schemaVersion: 1,
-  };
-  await saveCache(next);
-  return next;
+  });
 }
 
 export async function setCacheError(message: string): Promise<void> {
@@ -63,12 +109,12 @@ export async function upsertBookmarkInCache(bookmark: Bookmark): Promise<void> {
   } else {
     next = current.bookmarks.map((b) => (b.id === bookmark.id ? bookmark : b));
   }
-  await saveCache({ ...current, bookmarks: next });
+  await persist({ ...current, bookmarks: next });
 }
 
 export async function removeBookmarkFromCache(id: number): Promise<void> {
   const current = await getCache();
-  await saveCache({
+  await persist({
     ...current,
     bookmarks: current.bookmarks.filter((b) => b.id !== id),
   });
