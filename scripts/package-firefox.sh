@@ -12,7 +12,7 @@ const fs = require('fs');
 const manifest = JSON.parse(fs.readFileSync('dist-firefox/manifest.json', 'utf8'));
 manifest.browser_specific_settings = {
   gecko: {
-    id: 'linkding-extension@example.com',
+    id: 'linkding-toolbar-companion@example.com',
     strict_min_version: '109.0'
   }
 };

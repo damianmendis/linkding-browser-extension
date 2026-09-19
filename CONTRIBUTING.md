@@ -31,7 +31,7 @@ This document covers how to build the extension from source, run tests, and cont
 ## Project structure
 
 ```
-linkding-browser-extension/
+linkding-toolbar-companion/
 ├── public/
 │   └── manifest.json          # MV3 manifest (source — do not edit dist directly)
 ├── src/
@@ -79,8 +79,8 @@ linkding-browser-extension/
 
 ```bash
 # Clone the repository
-git clone https://github.com/damianmendis/linkding-browser-extension.git
-cd linkding-browser-extension
+git clone https://github.com/damianmendis/linkding-toolbar-companion.git
+cd linkding-toolbar-companion
 
 # Install dependencies
 npm install
