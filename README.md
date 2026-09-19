@@ -1,6 +1,8 @@
-# Linkding Browser Extension
+# Linkding Toolbar Companion
 
-A lightweight browser extension for [Linkding](https://github.com/sissbruecker/linkding) — the self-hosted bookmark manager. Search, open, and save bookmarks directly from your toolbar without leaving the page you're on.
+An unofficial, lightweight browser extension for [Linkding](https://github.com/sissbruecker/linkding) — the self-hosted bookmark manager. Search, open, and save bookmarks directly from your toolbar without leaving the page you're on.
+
+> Not affiliated with or endorsed by the Linkding project.
 
 ![Version](https://img.shields.io/github/v/release/damianmendis/linkding-browser-extension?label=version) ![License](https://img.shields.io/badge/license-MIT-green) ![MV3](https://img.shields.io/badge/manifest-v3-orange)
 
