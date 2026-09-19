@@ -5,27 +5,8 @@ set -euo pipefail
 echo "Building for Firefox…"
 npm run build:firefox
 
-echo "Copying Firefox manifest override…"
-# Firefox ignores background.service_worker entirely, so replace it with
-# background.scripts (the only mechanism Firefox actually runs). Also add
-# browser_specific_settings: data_collection_permissions requires the
-# {required: [...]} shape (a bare {none: true} fails validation) and is
-# only supported from Firefox 140 / Firefox for Android 142, so
-# strict_min_version must be at least 142.
-node -e "
-const fs = require('fs');
-const manifest = JSON.parse(fs.readFileSync('dist-firefox/manifest.json', 'utf8'));
-manifest.background.scripts = [manifest.background.service_worker];
-delete manifest.background.service_worker;
-manifest.browser_specific_settings = {
-  gecko: {
-    id: 'linkding-toolbar-companion@example.com',
-    strict_min_version: '142.0',
-    data_collection_permissions: { required: ['none'] }
-  }
-};
-fs.writeFileSync('dist-firefox/manifest.json', JSON.stringify(manifest, null, 2));
-"
+echo "Applying Firefox manifest override…"
+node scripts/firefox-manifest-override.js
 
 echo "Zipping to linkding-toolbar-companion-firefox.zip…"
 cd dist-firefox

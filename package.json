@@ -11,8 +11,8 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "lint": "tsc --noEmit",
-    "lint:firefox": "web-ext lint --source-dir dist-firefox",
-    "start:firefox": "web-ext run --source-dir dist-firefox"
+    "lint:firefox": "npm run build:firefox && node scripts/firefox-manifest-override.js && web-ext lint --source-dir dist-firefox",
+    "start:firefox": "npm run build:firefox && node scripts/firefox-manifest-override.js && web-ext run --source-dir dist-firefox"
   },
   "devDependencies": {
     "@playwright/test": "^1.44.0",
