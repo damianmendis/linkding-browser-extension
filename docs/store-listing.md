@@ -1,0 +1,129 @@
+# Web store listing content
+
+Source copy for the Chrome Web Store and Firefox Add-ons (AMO) submission
+forms. Paste directly into the relevant fields; character limits are called
+out where the store enforces one. Update the repo URLs throughout if/when
+the repo is renamed.
+
+---
+
+## Shared identity
+
+- **Name:** Linkding Toolbar Companion
+- **Short summary** (Chrome: ≤132 characters):
+
+  > Search, save, and manage your self-hosted Linkding bookmarks from the toolbar. Unofficial, not affiliated with Linkding.
+
+  (120 characters)
+
+- **Homepage / website URL:** https://github.com/damianmendis/linkding-browser-extension
+- **Support URL:** https://github.com/damianmendis/linkding-browser-extension/issues
+- **Privacy policy URL:** https://github.com/damianmendis/linkding-browser-extension/blob/main/PRIVACY.md
+- **License:** MIT
+
+## Full description (both stores)
+
+```
+Linkding Toolbar Companion is an unofficial browser extension for Linkding
+(https://github.com/sissbruecker/linkding), the popular self-hosted bookmark
+manager. It puts your bookmark library one click away from any tab — no need
+to open the Linkding web app to find, save, or edit a bookmark.
+
+FEATURES
+
+• Instant search — filter your entire bookmark library as you type, served
+  from a local cache so results appear immediately, even before the
+  extension finishes syncing with your server.
+• Save the current page in one click — title and URL are pre-filled; add
+  tags and notes before saving.
+• Edit and delete bookmarks inline, without leaving the popup.
+• Works offline — your most recent sync stays cached, so you can browse and
+  search even if your Linkding server is temporarily unreachable.
+• Full keyboard navigation — search, move through results, open, edit, and
+  save without touching the mouse.
+• Light and dark themes that follow your system setting.
+• Available for Chrome, Edge, and Firefox from a single codebase.
+
+REQUIREMENTS
+
+This extension is a client for your own Linkding server — it does not
+include or provide bookmark storage of its own. You'll need:
+
+• A running Linkding instance you control (self-hosted or otherwise)
+• Your Linkding API token (found under Settings → Integrations → REST API
+  in your Linkding instance)
+
+PRIVACY
+
+Your bookmarks, server URL, and API token are stored locally in your browser
+and sent only to the Linkding server you configure. This extension uses no
+analytics or telemetry, contacts no third-party service, and sends nothing
+to the developer. Full privacy policy:
+https://github.com/damianmendis/linkding-browser-extension/blob/main/PRIVACY.md
+
+Not affiliated with, endorsed by, or sponsored by the Linkding project.
+"Linkding" refers to the open-source bookmark manager this extension
+connects to.
+
+Source code and issue tracker:
+https://github.com/damianmendis/linkding-browser-extension
+```
+
+## Single purpose description (Chrome — required field)
+
+> Provides toolbar access to search, save, and manage bookmarks stored on
+> the user's own self-hosted Linkding server.
+
+## Permission justifications (Chrome — required per permission)
+
+| Permission | Justification text |
+|---|---|
+| `storage` | Used to store the user's Linkding server URL, API token, extension settings, and a local cache of bookmarks, entirely on-device, so the popup can load instantly and work offline. |
+| `activeTab` | Used only when the user clicks "Save current page," to read the URL and title of the active tab so they can be pre-filled into the save form. Not used for any other purpose. |
+| `tabs` | Used to open a bookmark in a new tab, or switch to it if it's already open, when the user clicks a search result. |
+| `alarms` | Used to schedule a periodic background refresh of the local bookmark cache from the user's configured Linkding server, so the cache stays current between manual syncs. |
+| Host permission (`https://*/*`, `http://*/*`, optional/runtime-granted) | Requested at runtime and granted only for the single origin of the Linkding server the user enters in Settings, via the browser's native permission prompt. Needed so the extension can call that server's REST API to sync, save, edit, and delete bookmarks. No other origin is ever requested. |
+
+## Chrome data-usage disclosure (Privacy practices tab)
+
+Chrome's dashboard asks you to declare what user data categories the item
+"collects" (their term for *transmitted off the user's device to you or a
+third party*) and to certify compliance. Recommended answers based on actual
+behavior — **re-check against the current Chrome Web Store policy at
+submission time, since this form changes periodically**:
+
+- Data categories collected by the developer: **None.** The extension reads
+  and stores an API token and bookmark data, but only to relay it to the
+  server the user themselves specified — nothing is transmitted to the
+  developer or any third party.
+- "Is this data sold to third parties?" **No.**
+- "Is this data used for purposes unrelated to the item's core functionality?" **No.**
+- "Is this data used to determine creditworthiness or for lending?" **No.**
+- Certifications: all should be checkable as-is given the above.
+
+If the Chrome review team pushes back on the "None collected" framing
+because the extension does handle an API token, the fallback answer is to
+declare **Authentication information** as handled, scoped to "used strictly
+for the extension's functionality" and "not sold, not shared" — the
+justification text above already supports that framing.
+
+## Categories
+
+- **Chrome Web Store:** Productivity
+- **Firefox Add-ons (AMO):** Bookmarks
+
+## Keywords / tags (AMO tags field; also informs Chrome's organic search copy)
+
+linkding, bookmarks, bookmark manager, self-hosted, self hosted, toolbar,
+tab search, read later, open source bookmarks, bookmark sync
+
+## Still needed before submission
+
+- Screenshots (1280×800 or 640×400, 1–5 images) — held off per request; can
+  generate realistic ones from the E2E mock-server harness, or use real
+  screenshots from your own instance.
+- Chrome: optional promo tiles (440×280 small tile; 1400×560 marquee) — not
+  required to publish.
+- A Chrome Web Store developer account ($5 one-time registration fee) and a
+  Firefox/Mozilla add-on developer account — both need to be created by you;
+  not something that can be done on your behalf.
