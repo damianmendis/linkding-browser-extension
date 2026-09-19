@@ -40,7 +40,7 @@ test.describe('Main view', () => {
 
   test('free-text search narrows the list', async ({ openPopup }) => {
     const popup = await openPopup();
-    await popup.getByRole('searchbox', { name: 'Search bookmarks' }).fill('Bravo');
+    await popup.getByRole('combobox', { name: 'Search bookmarks' }).fill('Bravo');
     const list = popup.getByRole('listbox', { name: 'Bookmarks' });
     await expect(list.getByRole('option')).toHaveCount(1);
     await expect(list.getByText('Bravo Post')).toBeVisible();
@@ -49,14 +49,14 @@ test.describe('Main view', () => {
   test('clicking a tag chip filters to an exact tag match', async ({ openPopup }) => {
     const popup = await openPopup();
     await popup.getByRole('button', { name: 'Filter by tag docker' }).first().click();
-    await expect(popup.getByRole('searchbox', { name: 'Search bookmarks' })).toHaveValue('#docker');
+    await expect(popup.getByRole('combobox', { name: 'Search bookmarks' })).toHaveValue('#docker');
     const list = popup.getByRole('listbox', { name: 'Bookmarks' });
     await expect(list.getByRole('option')).toHaveCount(2);
   });
 
   test('!unread modifier filters to unread bookmarks only', async ({ openPopup }) => {
     const popup = await openPopup();
-    await popup.getByRole('searchbox', { name: 'Search bookmarks' }).fill('!unread');
+    await popup.getByRole('combobox', { name: 'Search bookmarks' }).fill('!unread');
     const list = popup.getByRole('listbox', { name: 'Bookmarks' });
     await expect(list.getByRole('option')).toHaveCount(1);
     await expect(list.getByText('Bravo Post')).toBeVisible();
@@ -64,7 +64,7 @@ test.describe('Main view', () => {
 
   test('!archived modifier is the only mode that surfaces archived bookmarks', async ({ openPopup }) => {
     const popup = await openPopup();
-    await popup.getByRole('searchbox', { name: 'Search bookmarks' }).fill('!archived');
+    await popup.getByRole('combobox', { name: 'Search bookmarks' }).fill('!archived');
     const list = popup.getByRole('listbox', { name: 'Bookmarks' });
     await expect(list.getByRole('option')).toHaveCount(1);
     await expect(list.getByText('Delta Archived')).toBeVisible();
@@ -72,7 +72,7 @@ test.describe('Main view', () => {
 
   test('keyboard navigation moves selection and Enter opens the selected row in a new tab', async ({ openPopup, context, mockServer }) => {
     const popup = await openPopup();
-    const searchbox = popup.getByRole('searchbox', { name: 'Search bookmarks' });
+    const searchbox = popup.getByRole('combobox', { name: 'Search bookmarks' });
     // Row 0 (Alpha) is selected by default; move down to row 1 (Bravo).
     await searchbox.press('ArrowDown');
     // Opening a bookmark also calls window.close() on the popup. Because
@@ -175,5 +175,23 @@ test.describe('Edit bookmark view', () => {
 
     await expect(popup.getByRole('listbox', { name: 'Bookmarks' }).getByText('Alpha Article')).toBeVisible();
     expect(mockServer.getBookmarks()[0].title).toBe('Alpha Article');
+  });
+
+  test('F2 opens the edit modal for the active row without touching a mouse', async ({ openPopup }) => {
+    // Regression test: editing/deleting used to be reachable only by
+    // clicking the row's pencil button (tabIndex=-1, deliberately out of
+    // tab order) -- a pure-keyboard user had no way to trigger it at all.
+    const popup = await openPopup();
+    await popup.getByRole('combobox', { name: 'Search bookmarks' }).press('F2');
+
+    await expect(popup.getByRole('dialog', { name: 'Edit bookmark' })).toBeVisible();
+  });
+
+  test('the active row is exposed to assistive tech via aria-activedescendant', async ({ openPopup }) => {
+    const popup = await openPopup();
+    const box = popup.getByRole('combobox', { name: 'Search bookmarks' });
+    const activeId = await box.getAttribute('aria-activedescendant');
+    expect(activeId).toBeTruthy();
+    await expect(popup.locator(`#${activeId}`)).toHaveAttribute('aria-selected', 'true');
   });
 });
