@@ -117,11 +117,29 @@ justification text above already supports that framing.
 linkding, bookmarks, bookmark manager, self-hosted, self hosted, toolbar,
 tab search, read later, open source bookmarks, bookmark sync
 
+## Screenshots
+
+Five 1280×800 screenshots in `docs/screenshots/`, ready to upload as-is to
+both stores:
+
+| File | Shows |
+|---|---|
+| `01-list.png` | Recent bookmarks list on popup open |
+| `02-search.png` | Instant local search, filtered to one result |
+| `03-save.png` | "Save current page" form, pre-filled |
+| `04-edit.png` | Inline edit modal |
+| `05-options.png` | Settings page, server connected |
+
+Generated against the E2E mock-server harness with a seeded, realistic-
+looking bookmark set (not a real user's data), then composited into a
+lightweight browser-chrome mockup with a caption, reusing the extension's
+own color and type tokens. The one cosmetic liberty: the settings screenshot
+shows `https://links.example.com` in place of the mock server's actual
+`127.0.0.1:<port>` — the "✓ Connected" badge is real, from an actual
+successful test-connection call against the mock server.
+
 ## Still needed before submission
 
-- Screenshots (1280×800 or 640×400, 1–5 images) — held off per request; can
-  generate realistic ones from the E2E mock-server harness, or use real
-  screenshots from your own instance.
 - Chrome: optional promo tiles (440×280 small tile; 1400×560 marquee) — not
   required to publish.
 - A Chrome Web Store developer account ($5 one-time registration fee) and a
