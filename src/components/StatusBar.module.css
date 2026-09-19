@@ -23,30 +23,27 @@
   background: var(--color-success);
 }
 
-.syncing {
-  color: var(--color-accent);
-}
 .syncing .dot {
   background: var(--color-accent);
   animation: pulse 1s ease-in-out infinite;
 }
 
 .offline {
-  color: var(--color-warning);
+  color: var(--color-warning-text);
 }
 .offline .dot {
   background: var(--color-warning);
 }
 
 .error {
-  color: var(--color-danger);
+  color: var(--color-danger-text);
 }
 .error .dot {
   background: var(--color-danger);
 }
 
 .warning {
-  color: var(--color-warning);
+  color: var(--color-warning-text);
   font-weight: 500;
 }
 

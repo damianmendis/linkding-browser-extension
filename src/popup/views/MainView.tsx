@@ -58,15 +58,17 @@ export function MainView({
     searchRef.current?.focus();
   }
 
-  function handleKeyDown(e: React.KeyboardEvent) {
-    if (e.key === '/') {
-      if (document.activeElement !== searchRef.current) {
-        e.preventDefault();
-        searchRef.current?.focus();
-      }
-      return;
+  // Handles '/' anywhere in the view (bubbles up from whichever control has
+  // focus -- the sync/settings/add buttons, or the search box itself, which
+  // just types the character normally since it's already focused there).
+  function handleGlobalKeyDown(e: React.KeyboardEvent) {
+    if (e.key === '/' && document.activeElement !== searchRef.current) {
+      e.preventDefault();
+      searchRef.current?.focus();
     }
+  }
 
+  function handleSearchKeyDown(e: React.KeyboardEvent) {
     if (e.key === 'Escape') {
       if (query) { setQuery(''); }
       else { window.close(); }
@@ -93,11 +95,19 @@ export function MainView({
       e.preventDefault();
       const forceNewTab = e.ctrlKey || e.metaKey;
       onOpen(displayResults[activeIndex].bookmark, forceNewTab ? 'new-tab' : undefined);
+      return;
+    }
+
+    if (e.key === 'F2' && displayResults[activeIndex]) {
+      e.preventDefault();
+      onEdit(displayResults[activeIndex].bookmark);
     }
   }
 
+  const activeBookmarkId = displayResults[activeIndex]?.bookmark.id;
+
   return (
-    <div className={styles.root} onKeyDown={handleKeyDown} tabIndex={-1} role="application" aria-label="Linkding bookmarks">
+    <div className={styles.root} onKeyDown={handleGlobalKeyDown}>
       <div className={styles.topBar}>
         <div className={styles.searchWrapper}>
           <span className={styles.searchIcon} aria-hidden="true">🔍</span>
@@ -108,8 +118,13 @@ export function MainView({
             placeholder="Search bookmarks…"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={handleSearchKeyDown}
+            role="combobox"
+            aria-expanded="true"
+            aria-haspopup="listbox"
             aria-label="Search bookmarks"
             aria-controls="bookmark-list"
+            aria-activedescendant={activeBookmarkId != null ? `bookmark-option-${activeBookmarkId}` : undefined}
             autoComplete="off"
             spellCheck={false}
           />
@@ -150,6 +165,7 @@ export function MainView({
         {displayResults.map((result, idx) => (
           <BookmarkRow
             key={result.bookmark.id}
+            id={`bookmark-option-${result.bookmark.id}`}
             ref={(el) => {
               if (el) rowRefs.current.set(result.bookmark.id, el);
               else rowRefs.current.delete(result.bookmark.id);

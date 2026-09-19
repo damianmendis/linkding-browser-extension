@@ -6,6 +6,7 @@ import type { Bookmark } from '../lib/types';
 const MAX_VISIBLE_TAGS = 3;
 
 interface BookmarkRowProps {
+  id?: string;
   bookmark: Bookmark;
   isActive: boolean;
   titleMatchIndex: number;
@@ -50,6 +51,7 @@ function HighlightedTitle({
 export const BookmarkRow = React.forwardRef<HTMLDivElement, BookmarkRowProps>(
   (
     {
+      id,
       bookmark,
       isActive,
       titleMatchIndex,
@@ -65,6 +67,7 @@ export const BookmarkRow = React.forwardRef<HTMLDivElement, BookmarkRowProps>(
 
     return (
       <div
+        id={id}
         ref={ref}
         className={`${styles.row} ${isActive ? styles.active : ''}`}
         role="option"
@@ -75,9 +78,6 @@ export const BookmarkRow = React.forwardRef<HTMLDivElement, BookmarkRowProps>(
             e.preventDefault();
             onOpen(bookmark, 'new-tab');
           }
-        }}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter') onOpen(bookmark);
         }}
         tabIndex={-1}
       >
@@ -131,6 +131,7 @@ export const BookmarkRow = React.forwardRef<HTMLDivElement, BookmarkRowProps>(
           }}
           onAuxClick={(e) => e.stopPropagation()}
           aria-label={`Edit bookmark: ${bookmark.title || bookmark.url}`}
+          aria-keyshortcuts="F2"
           tabIndex={-1}
         >
           ✏
