@@ -138,10 +138,26 @@ shows `https://links.example.com` in place of the mock server's actual
 `127.0.0.1:<port>` — the "✓ Connected" badge is real, from an actual
 successful test-connection call against the mock server.
 
+## Promo tiles (optional, Chrome only)
+
+Two tiles in `docs/promo/`, ready to upload to the Store Listing tab's
+"Promotional images" section:
+
+| File | Size | Use |
+|---|---|---|
+| `promo-small-440x280.png` | 440×280 | Small promo tile |
+| `promo-marquee-1400x560.png` | 1400×560 | Marquee (only shown if Chrome features the listing) |
+
+Same brand system as the screenshots (accent blue, product mark, Archivo
+Black / Acumin Pro type pairing). Also exported as an editable 2-slide Adobe
+Express document: https://new.express.adobe.com/id/urn:aaid:sc:AP:603f0202-799e-4517-a2e0-b25af3e060f0
+— note the marquee slide's decorative search-card mockup lost its small
+placeholder bars/chips in that import (plain empty `<div>`s with only a
+background color didn't convert to shapes); the PNG above is unaffected and
+is the one to actually upload.
+
 ## Still needed before submission
 
-- Chrome: optional promo tiles (440×280 small tile; 1400×560 marquee) — not
-  required to publish.
 - A Chrome Web Store developer account ($5 one-time registration fee) and a
   Firefox/Mozilla add-on developer account — both need to be created by you;
   not something that can be done on your behalf.
