@@ -16,9 +16,9 @@ the repo is renamed.
 
   (120 characters)
 
-- **Homepage / website URL:** https://github.com/damianmendis/linkding-browser-extension
-- **Support URL:** https://github.com/damianmendis/linkding-browser-extension/issues
-- **Privacy policy URL:** https://github.com/damianmendis/linkding-browser-extension/blob/main/PRIVACY.md
+- **Homepage / website URL:** https://github.com/damianmendis/linkding-toolbar-companion
+- **Support URL:** https://github.com/damianmendis/linkding-toolbar-companion/issues
+- **Privacy policy URL:** https://github.com/damianmendis/linkding-toolbar-companion/blob/main/PRIVACY.md
 - **License:** MIT
 
 ## Full description (both stores)
@@ -59,14 +59,14 @@ Your bookmarks, server URL, and API token are stored locally in your browser
 and sent only to the Linkding server you configure. This extension uses no
 analytics or telemetry, contacts no third-party service, and sends nothing
 to the developer. Full privacy policy:
-https://github.com/damianmendis/linkding-browser-extension/blob/main/PRIVACY.md
+https://github.com/damianmendis/linkding-toolbar-companion/blob/main/PRIVACY.md
 
 Not affiliated with, endorsed by, or sponsored by the Linkding project.
 "Linkding" refers to the open-source bookmark manager this extension
 connects to.
 
 Source code and issue tracker:
-https://github.com/damianmendis/linkding-browser-extension
+https://github.com/damianmendis/linkding-toolbar-companion
 ```
 
 ## Single purpose description (Chrome — required field)

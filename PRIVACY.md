@@ -69,4 +69,4 @@ date above.
 This is an independent, unofficial project — not affiliated with, endorsed
 by, or sponsored by the Linkding project. For questions about this policy or
 the extension, open an issue at:
-https://github.com/damianmendis/linkding-browser-extension/issues
+https://github.com/damianmendis/linkding-toolbar-companion/issues
