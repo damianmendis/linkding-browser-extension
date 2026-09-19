@@ -19,9 +19,9 @@ manifest.browser_specific_settings = {
 fs.writeFileSync('dist-firefox/manifest.json', JSON.stringify(manifest, null, 2));
 "
 
-echo "Zipping to linkding-firefox.zip…"
+echo "Zipping to linkding-toolbar-companion-firefox.zip…"
 cd dist-firefox
-zip -r ../linkding-firefox.zip . -x '*.DS_Store'
+zip -r ../linkding-toolbar-companion-firefox.zip . -x '*.DS_Store'
 cd ..
 
-echo "Done: linkding-firefox.zip"
+echo "Done: linkding-toolbar-companion-firefox.zip"

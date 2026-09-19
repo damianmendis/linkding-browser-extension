@@ -66,8 +66,8 @@ linkding-toolbar-companion/
 │   └── e2e/                   # Playwright tests against the built extension
 │       └── fixtures/          # Persistent-context launcher + mock Linkding server
 ├── scripts/
-│   ├── package-chrome.sh      # Produces linkding-chrome.zip
-│   └── package-firefox.sh     # Produces linkding-firefox.zip
+│   ├── package-chrome.sh      # Produces linkding-toolbar-companion-chrome.zip
+│   └── package-firefox.sh     # Produces linkding-toolbar-companion-firefox.zip
 ├── vite.config.ts             # Single config, Chrome/Firefox selected via --mode
 ├── tsconfig.json
 └── package.json
@@ -139,10 +139,10 @@ Both targets use tree-shaking and minification. The output is ready to load unpa
 ## Packaging for distribution
 
 ```bash
-# Produces linkding-chrome.zip (from dist-chrome/)
+# Produces linkding-toolbar-companion-chrome.zip (from dist-chrome/)
 bash scripts/package-chrome.sh
 
-# Produces linkding-firefox.zip (from dist-firefox/)
+# Produces linkding-toolbar-companion-firefox.zip (from dist-firefox/)
 bash scripts/package-firefox.sh
 ```
 
@@ -150,10 +150,10 @@ Or manually:
 
 ```bash
 # Chrome
-cd dist-chrome && zip -r ../linkding-chrome.zip . -x '*.DS_Store'
+cd dist-chrome && zip -r ../linkding-toolbar-companion-chrome.zip . -x '*.DS_Store'
 
 # Firefox
-cd dist-firefox && zip -r ../linkding-firefox.zip . -x '*.DS_Store'
+cd dist-firefox && zip -r ../linkding-toolbar-companion-firefox.zip . -x '*.DS_Store'
 ```
 
 ---

@@ -5,9 +5,9 @@ set -euo pipefail
 echo "Building for Chrome/Edge…"
 npm run build:chrome
 
-echo "Zipping to linkding-chrome.zip…"
+echo "Zipping to linkding-toolbar-companion-chrome.zip…"
 cd dist-chrome
-zip -r ../linkding-chrome.zip . -x '*.DS_Store'
+zip -r ../linkding-toolbar-companion-chrome.zip . -x '*.DS_Store'
 cd ..
 
-echo "Done: linkding-chrome.zip"
+echo "Done: linkding-toolbar-companion-chrome.zip"

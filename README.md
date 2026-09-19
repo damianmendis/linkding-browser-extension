@@ -31,7 +31,7 @@ An unofficial, lightweight browser extension for [Linkding](https://github.com/s
 
 ### Chrome / Edge
 
-1. Download **[linkding-chrome.zip](https://github.com/damianmendis/linkding-toolbar-companion/releases/latest/download/linkding-chrome.zip)** (always the latest release)
+1. Download **[linkding-toolbar-companion-chrome.zip](https://github.com/damianmendis/linkding-toolbar-companion/releases/latest/download/linkding-toolbar-companion-chrome.zip)** (always the latest release)
 2. Unzip the file
 3. Go to `chrome://extensions` (or `edge://extensions`)
 4. Enable **Developer mode** (top-right toggle)
@@ -39,7 +39,7 @@ An unofficial, lightweight browser extension for [Linkding](https://github.com/s
 
 ### Firefox
 
-1. Download **[linkding-firefox.zip](https://github.com/damianmendis/linkding-toolbar-companion/releases/latest/download/linkding-firefox.zip)** (always the latest release)
+1. Download **[linkding-toolbar-companion-firefox.zip](https://github.com/damianmendis/linkding-toolbar-companion/releases/latest/download/linkding-toolbar-companion-firefox.zip)** (always the latest release)
 2. Go to `about:debugging#/runtime/this-firefox`
 3. Click **Load Temporary Add-on**
 4. Select the zip file directly
