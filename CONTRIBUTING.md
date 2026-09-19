@@ -62,7 +62,9 @@ linkding-browser-extension/
 │       ├── validators.ts      # URL/token validation
 │       └── types.ts           # Shared TypeScript types + message protocol
 ├── tests/
-│   └── unit/                  # Vitest unit tests
+│   ├── unit/                  # Vitest unit tests
+│   └── e2e/                   # Playwright tests against the built extension
+│       └── fixtures/          # Persistent-context launcher + mock Linkding server
 ├── scripts/
 │   ├── package-chrome.sh      # Produces linkding-chrome.zip
 │   └── package-firefox.sh     # Produces linkding-firefox.zip
@@ -177,6 +179,26 @@ The test suite uses **Vitest** and covers:
 
 There are **63 unit tests** in the current suite. All must pass before submitting a PR.
 
+### End-to-end tests
+
+```bash
+# One-time: build the extension and fetch a Chromium build for Playwright
+npm run build:chrome
+npx playwright install chromium
+
+# Run the suite (needs a display -- xvfb-run in CI/headless environments)
+npm run test:e2e
+# or, without a display:
+xvfb-run --auto-servernum npm run test:e2e
+```
+
+These load `dist-chrome/` into a real Chromium instance (`chromium.launchPersistentContext` with `--load-extension`) and talk to an in-memory mock Linkding server (`tests/e2e/fixtures/mock-server.ts`) instead of a real instance. Two environment-driven workarounds worth knowing about, both documented at the top of `tests/e2e/fixtures/extension.ts`:
+
+- **Headed only.** Headless Chromium doesn't fully expose `chrome.*` extension APIs in every environment; the fixture always launches headed, which is why CI and Docker runs need `xvfb-run`.
+- **Popups are opened as a normal tab**, not via a real toolbar-icon click (Playwright has no supported way to drive that for MV3 and capture the resulting popup). This is faithful for everything except `getActiveTab()`-based prefill on the "save current page" form, which will see the popup's own tab rather than a preceding page -- tests don't assert on prefilled values for that reason.
+
+Tests run with a single Playwright worker (`playwright.config.ts`): each test launches its own persistent browser context, and running several of those concurrently is unstable in constrained environments (this project's Docker-based dev flow included).
+
 ---
 
 ## Architecture notes
@@ -269,7 +291,7 @@ Settings, connection test, cache sync, toolbar popup, instant search, recent boo
 
 1. Fork the repository and create a branch from `main`
 2. Make your changes — keep PRs focused on a single concern
-3. Run `npm test` and ensure all tests pass
+3. Run `npm test` and ensure all tests pass; run `npm run test:e2e` if you touched the popup UI or background sync logic
 4. Build for both targets (`npm run build:chrome && npm run build:firefox`) and test manually
 5. Open a pull request with a clear description of what changed and why
 

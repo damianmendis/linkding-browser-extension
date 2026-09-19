@@ -5,3 +5,5 @@ linkding-chrome.zip
 linkding-firefox.zip
 *.tar.gz
 .DS_Store
+test-results/
+playwright-report/
