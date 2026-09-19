@@ -165,17 +165,21 @@ development CLI. Its `lint` command runs `addons-linter` -- the same engine
 AMO's upload page validates against -- so issues show up locally instead of
 after an upload attempt.
 
+`lint:firefox` builds the Firefox bundle, applies the same
+`scripts/firefox-manifest-override.js` fixup `package-firefox.sh` uses
+(`background.scripts`, `browser_specific_settings`, etc. -- see that file for
+why each one is there), then lints the result -- it's self-contained, no
+need to run anything else first:
+
 ```bash
-npm run build:firefox
 npm run lint:firefox
 ```
 
-Run both inside the project's `node:22` container per this repo's environment
+Run it inside the project's `node:22` container per this repo's environment
 policy:
 
 ```bash
-docker run --rm -v "$PWD":/app -w /app node:22 \
-  bash -c "npm ci && npm run build:firefox && npm run lint:firefox"
+docker run --rm -v "$PWD":/app -w /app node:22 bash -c "npm ci && npm run lint:firefox"
 ```
 
 `web-ext` can also load the built extension into a real Firefox for manual
@@ -183,6 +187,10 @@ testing (`npm run start:firefox`), but that requires a Firefox binary on
 whatever machine runs it -- it's not something this containerized flow covers.
 
 This is local dev tooling only; it is **not** wired into CI yet.
+
+---
+
+## Running tests
 
 ```bash
 # Run all unit tests once
