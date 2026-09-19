@@ -85,7 +85,6 @@
 
 .field input:focus,
 .field select:focus {
-  outline: none;
   border-color: var(--color-accent);
 }
 
@@ -123,9 +122,9 @@
 
 .formError {
   font-size: var(--font-size-sm);
-  color: var(--color-danger);
+  color: var(--color-danger-text);
   padding: 8px 12px;
-  background: rgba(220, 38, 38, 0.08);
+  background: rgba(var(--color-danger-tint-rgb), 0.08);
   border-radius: var(--radius-md);
   margin-bottom: 14px;
 }
@@ -142,11 +141,11 @@
 }
 
 .badgeSuccess {
-  background: rgba(22, 163, 74, 0.12);
-  color: var(--color-success);
+  background: rgba(var(--color-success-tint-rgb), 0.06);
+  color: var(--color-success-text);
 }
 
 .badgeError {
-  background: rgba(220, 38, 38, 0.1);
-  color: var(--color-danger);
+  background: rgba(var(--color-danger-tint-rgb), 0.1);
+  color: var(--color-danger-text);
 }

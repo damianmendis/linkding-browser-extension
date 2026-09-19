@@ -10,10 +10,10 @@
   --color-bg: #ffffff;
   --color-surface: #f7f8fa;
   --color-surface-hover: #eef0f4;
-  --color-border: #dde1e8;
+  --color-border: #818a98;
   --color-text: #1a1d23;
   --color-text-secondary: #6b7280;
-  --color-text-muted: #9ca3af;
+  --color-text-muted: #616c7f;
   --color-accent: #2563eb;
   --color-accent-hover: #1d4ed8;
   --color-accent-text: #ffffff;
@@ -21,9 +21,24 @@
   --color-danger-hover: #b91c1c;
   --color-success: #16a34a;
   --color-warning: #d97706;
+  /*
+   * -text variants: --color-danger/--color-success/--color-warning read
+   * fine as small fills (status dots, button backgrounds -- 3:1 is enough
+   * there) but are too light to use as text at the required 4.5:1,
+   * especially on their own pale tint backgrounds. These are for actual
+   * text content; the base tokens stay as fills/dots.
+   */
+  --color-danger-text: #b91c1c;
+  --color-success-text: #15803d;
+  --color-warning-text: #b45309;
+  --color-danger-tint-rgb: 185, 28, 28;
+  --color-success-tint-rgb: 21, 128, 61;
   --color-tag-bg: #e0e7ff;
   --color-tag-text: #3730a3;
-  --color-focus: #2563eb;
+  /* Always equal to --color-accent (not a value of its own) so a theme
+     override to one can't silently leave the other out of sync -- that's
+     exactly how the dark-theme focus ring ended up under 3:1 before. */
+  --color-focus: var(--color-accent);
 
   --radius-sm: 4px;
   --radius-md: 6px;
@@ -46,12 +61,22 @@
     --color-bg: #1a1d23;
     --color-surface: #22262e;
     --color-surface-hover: #2a2f3a;
-    --color-border: #323742;
+    --color-border: #6f7690;
     --color-text: #e8eaf0;
     --color-text-secondary: #9ca3af;
-    --color-text-muted: #6b7280;
+    --color-text-muted: #8993ab;
     --color-accent: #3b82f6;
     --color-accent-hover: #2563eb;
+    /* Primary-button text was silently staying white in dark mode too
+       (this token was never redefined here), which only gave 3.68:1
+       against the dark-mode accent fill -- dark text on the same fill
+       clears 4.5:1 instead. */
+    --color-accent-text: #1a1d23;
+    --color-danger-text: #f87171;
+    --color-success-text: #4ade80;
+    --color-warning-text: #fbbf24;
+    --color-danger-tint-rgb: 248, 113, 113;
+    --color-success-tint-rgb: 74, 222, 128;
     --color-tag-bg: #1e3a5f;
     --color-tag-text: #93c5fd;
   }

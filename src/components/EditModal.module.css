@@ -85,7 +85,6 @@
 
 .field input:focus,
 .field textarea:focus {
-  outline: none;
   border-color: var(--color-accent);
 }
 
@@ -96,9 +95,9 @@
 
 .error {
   font-size: var(--font-size-sm);
-  color: var(--color-danger);
+  color: var(--color-danger-text);
   padding: 6px 10px;
-  background: rgba(220, 38, 38, 0.08);
+  background: rgba(var(--color-danger-tint-rgb), 0.08);
   border-radius: var(--radius-sm);
 }
 
@@ -116,7 +115,7 @@
 
 .deleteBtn {
   font-size: var(--font-size-sm);
-  color: var(--color-danger);
+  color: var(--color-danger-text);
   background: none;
   border: none;
   cursor: pointer;
@@ -127,7 +126,7 @@
   transition: background var(--transition);
 }
 .deleteBtn:hover:not(:disabled) {
-  background: rgba(220, 38, 38, 0.08);
+  background: rgba(var(--color-danger-tint-rgb), 0.08);
 }
 .deleteBtn:disabled {
   opacity: 0.5;
